@@ -1,1 +1,4481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WILLIE GAMES V2 | Education</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <script src="/scram/scramjet.all.js"></script>
+  <script src="/baremux/index.js"></script>
+  <script src="register-sw.js"></script>
+  <script src="search.js"></script>
+  <style>
+    :root {
+      --bg: rgba(10,10,12,0.55);
+      --sidebar-bg: rgba(16,16,20,0.55);
+      --card-bg: rgba(20,20,26,0.5);
+      --card-hover: rgba(28,28,38,0.6);
+      --silver: #b0bec5;
+      --silver-bright: #e0e8ef;
+      --silver-dim: #607d8b;
+      --accent: #78909c;
+      --border: #1e2a32;
+      --border-bright: #37474f;
+      --text: #cfd8dc;
+      --text-dim: #546e7a;
+      --glow: rgba(176, 190, 197, 0.15);
+    }
 
+    * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+
+    #custom-cursor {
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 8px 4px rgba(255,255,255,0.6), 0 0 24px 10px rgba(255,255,255,0.25);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    body {
+      background: var(--bg);
+
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    
+    #sidebar {
+      width: 220px;
+      min-width: 220px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      position: relative;
+      z-index: 10;
+    }
+
+    #logo {
+      padding: 28px 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #logo h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--silver-bright);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid var(--silver-bright);
+      width: 0;
+      animation: typing 0.8s steps(6, end) 0.3s forwards, blink 0.75s step-end 1.1s 4;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to   { width: 100%; }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    .cursor-trail {
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 99998;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 4px 2px rgba(255,255,255,0.3);
+    }
+
+    #logo span {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 11px;
+      color: var(--silver-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    nav {
+      flex: 1;
+      padding: 16px 0;
+    }
+
+    .nav-section-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      padding: 8px 20px 4px;
+      font-family: 'Orbitron', monospace;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 20px;
+      cursor: pointer;
+      color: var(--silver-dim);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      border-left: 3px solid transparent;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .nav-item:hover {
+      color: var(--silver-bright);
+      background: var(--glow);
+      border-left-color: var(--silver);
+    }
+
+    .nav-item.active {
+      color: var(--silver-bright);
+      background: linear-gradient(90deg, rgba(176,190,197,0.1), transparent);
+      border-left-color: var(--silver-bright);
+    }
+
+    .nav-item .icon {
+      font-size: 18px;
+      width: 22px;
+      text-align: center;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--border-bright);
+      color: var(--silver);
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-family: 'Orbitron', monospace;
+    }
+
+    #sidebar-bottom {
+      padding: 16px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #topbar {
+      height: 60px;
+      background: var(--sidebar-bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 16px;
+    }
+
+    #topbar h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--silver);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    #search {
+      margin-left: auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      width: 220px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #search:focus { border-color: var(--silver); }
+    #search::placeholder { color: var(--text-dim); }
+
+    
+    #content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-bright) transparent;
+    }
+
+    #content::-webkit-scrollbar { width: 5px; }
+    #content::-webkit-scrollbar-track { background: transparent; }
+    #content::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+
+    
+    .view { display: none; }
+    .view.active { display: block; animation: viewFadeIn 0.25s ease; }
+
+    @keyframes viewFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--silver-dim);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .game-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: block;
+      position: relative;
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 11px;
+      background: linear-gradient(var(--grad-angle, 0deg), #00e5ff, #7c4dff, #00e5ff);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      padding: 1px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      background-size: 200% 200%;
+      z-index: 0;
+    }
+
+    .game-card:hover::before {
+      opacity: 1;
+      animation: gradientSpin 2s linear infinite;
+    }
+
+    @keyframes gradientSpin {
+      0%   { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    .game-card:hover {
+      background: var(--card-hover);
+      border-color: var(--border-bright);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px var(--border-bright);
+    }
+
+    .game-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      background: linear-gradient(135deg, #141420, #0e1520);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-thumb::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(176,190,197,0.05), transparent 70%);
+    }
+
+    .game-info {
+      padding: 12px 14px;
+    }
+
+    .game-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--silver-bright);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .game-genre {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    
+    #view-proxy {
+      position: relative;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+      margin: 0 -28px -28px -28px;
+    }
+
+    
+    #proxy-landing {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      z-index: 2;
+    }
+
+    #proxy-landing.hidden { display: none; }
+
+    
+    #proxy-particles {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .proxy-landing-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 640px;
+      padding: 0 24px;
+    }
+
+    .proxy-landing-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 42px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #e0e8ef, #00e5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+
+    .proxy-landing-sub {
+      font-size: 16px;
+      color: #aaa;
+      margin-bottom: 20px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .proxy-landing-bar {
+      display: flex;
+      width: 100%;
+      background: rgba(20,20,28,0.8);
+      border: 1px solid #37474f;
+      border-radius: 50px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      backdrop-filter: blur(8px);
+    }
+
+    .proxy-landing-bar:focus-within {
+      border-color: #00e5ff;
+      box-shadow: 0 0 0 2px rgba(0,229,255,0.1);
+    }
+
+    .proxy-landing-bar-icon {
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      color: #555;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    #proxy-url {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #e0e0e0;
+      padding: 14px 4px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      outline: none;
+    }
+
+    #proxy-url::placeholder { color: #555; }
+
+    .proxy-landing-go {
+      background: transparent;
+      border: none;
+      color: #888;
+      padding: 0 20px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .proxy-landing-go:hover { color: #c0622a; }
+
+    
+    .proxy-quicklinks {
+      display: flex;
+      gap: 16px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .proxy-quicklink {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      text-decoration: none;
+    }
+
+    .proxy-quicklink:hover { transform: translateY(-4px); }
+
+    .proxy-quicklink-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: rgba(20,20,28,0.8);
+      border: 1px solid #37474f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .proxy-quicklink:hover .proxy-quicklink-icon {
+      border-color: #00e5ff;
+      box-shadow: 0 0 12px rgba(0,229,255,0.15);
+    }
+
+    .proxy-quicklink-icon img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    .proxy-quicklink-label {
+      font-size: 12px;
+      color: #888;
+      letter-spacing: 1px;
+    }
+
+    
+    #proxy-browser {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      z-index: 2;
+    }
+
+    #proxy-browser.visible { display: flex; }
+
+    .proxy-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      background: rgba(12,12,20,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--silver);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nav-btn:hover {
+      background: var(--card-hover);
+      border-color: var(--border-bright);
+      color: var(--silver-bright);
+    }
+
+    #proxy-url-bar {
+      flex: 1;
+      background: rgba(20,20,28,0.8);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 50px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    #proxy-url-bar:focus { border-color: #00e5ff; box-shadow: 0 0 0 2px rgba(0,229,255,0.1); }
+
+    .btn-home {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--silver);
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .btn-home:hover { background: var(--card-hover); border-color: var(--border-bright); color: var(--silver-bright); }
+
+    #proxy-frame-container {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    #proxy-frame-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .btn {
+      background: transparent;
+      border: 1px solid var(--border-bright);
+      color: var(--silver-bright);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: var(--silver);
+    }
+
+    
+    #settings-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      backdrop-filter: blur(4px);
+    }
+
+    #settings-overlay.open { display: block; }
+
+    #settings-panel {
+      position: fixed;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 360px;
+      background: rgba(14,14,20,0.6);
+      backdrop-filter: blur(12px);
+      border-left: 1px solid var(--border-bright);
+      z-index: 101;
+      padding: 0;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    #settings-overlay.open #settings-panel {
+      transform: translateX(0);
+    }
+
+    #settings-header {
+      padding: 24px 24px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #settings-header h3 {
+      font-family: 'Orbitron', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--silver-bright);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    #settings-close {
+      cursor: pointer;
+      color: var(--text-dim);
+      font-size: 20px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    #settings-close:hover { color: var(--silver-bright); }
+
+    #settings-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .setting-group {
+      margin-bottom: 28px;
+    }
+
+    .setting-group-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .setting-label {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .setting-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: var(--border-bright);
+      border-radius: 24px;
+      transition: 0.3s;
+    }
+
+    .toggle-slider:before {
+      content: '';
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: var(--silver-dim);
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    input:checked + .toggle-slider { background: var(--silver); }
+    input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+      background: #0a0a0c;
+    }
+
+    
+    .setting-select {
+      background: var(--card-bg);
+      border: 1px solid var(--border-bright);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    
+    .hero {
+      background: linear-gradient(135deg, #101018, #141420);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 40px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(176,190,197,0.06), transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--silver-bright);
+      letter-spacing: 3px;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: var(--silver-dim);
+      font-size: 16px;
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--silver-bright);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    
+    #sidebar { transition: width 0.2s, min-width 0.2s; }
+    #sidebar.collapsed { width: 0; min-width: 0; overflow: hidden; }
+    #sidebar-toggle {
+      position: fixed;
+      top: 14px;
+      left: 226px;
+      z-index: 100;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--silver);
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: left 0.2s;
+    }
+    #sidebar-toggle.collapsed { left: 6px; }
+
+    
+    .hb-list { display: flex; flex-direction: column; gap: 8px; padding-bottom: 28px; }
+    .hb-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .hb-item:hover { background: var(--card-hover); border-color: var(--border-bright); }
+    .hb-icon { font-size: 18px; flex-shrink: 0; }
+    .hb-info { flex: 1; min-width: 0; }
+    .hb-title { font-size: 14px; font-weight: 600; color: var(--silver-bright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hb-url { font-size: 11px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hb-time { font-size: 11px; color: var(--text-dim); flex-shrink: 0; }
+    .hb-del { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 16px; padding: 0 4px; flex-shrink: 0; }
+    .hb-del:hover { color: #ef5350; }
+    .hb-empty { color: var(--text-dim); font-size: 14px; text-align: center; padding: 40px 0; }
+
+    
+    .home-section { margin-bottom: 28px; }
+
+    
+    .game-card { position: relative; }
+    .game-fav-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(0,0,0,0.5);
+      border: none;
+      color: #888;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      padding: 2px 4px;
+      line-height: 1;
+      z-index: 2;
+      transition: color 0.2s;
+    }
+    .game-fav-btn.starred { color: #ffd600; }
+    .game-fav-btn:hover { color: #ffd600; }
+
+    
+    #proxy-engine-select {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--silver);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      outline: none;
+      flex-shrink: 0;
+    }
+
+    
+    #proxy-tabbar {
+      display: flex;
+      align-items: center;
+      background: #12121a;
+      border-bottom: 1px solid var(--border);
+      padding: 0 6px;
+      height: 44px;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-shrink: 0;
+    }
+    #proxy-tabbar::-webkit-scrollbar { display: none; }
+
+    .proxy-tab {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 10px 0 12px;
+      height: 28px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      color: var(--text-dim);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+      max-width: 180px;
+      min-width: 80px;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .proxy-tab:hover { background: var(--card-hover); color: var(--silver); border-color: var(--border-bright); }
+    .proxy-tab.active {
+      background: #101014;
+      color: var(--silver-bright);
+      border-color: #00e5ff;
+      border-bottom-color: #101014;
+    }
+    .proxy-tab-title {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .proxy-tab-close {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0;
+      line-height: 1;
+      border-radius: 4px;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+    .proxy-tab-close:hover { background: rgba(239,83,80,0.18); color: #ef5350; }
+
+    #proxy-tab-new {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--silver-dim);
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    #proxy-tab-new:hover { background: var(--card-hover); color: var(--silver-bright); border-color: var(--border-bright); }
+
+    
+    .engine-picker-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--silver);
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .engine-picker-btn:hover { background: var(--card-hover); border-color: var(--border-bright); color: var(--silver-bright); }
+
+    #engine-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #0e0e14;
+      border: 1px solid var(--border-bright);
+      border-radius: 10px;
+      padding: 6px;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 9999;
+      min-width: 160px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    #engine-dropdown.open { display: flex; }
+    .engine-option {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .engine-option:hover { background: var(--card-hover); color: var(--silver-bright); }
+    .engine-option.selected { color: #c0622a; }
+    .engine-option-icon { font-size: 16px; width: 20px; height: 20px; text-align: center; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .engine-option-icon img { width:16px; height:16px; object-fit:contain; border-radius:3px; }
+
+    
+    .tab-newtab-page {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      gap: 12px;
+      padding: 0 24px;
+      z-index: 2;
+    }
+    .tab-newtab-page.hidden { display: none; }
+    .tab-newtab-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 32px;
+      font-weight: 900;
+      color: #c0622a;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+    .tab-newtab-sub {
+      font-size: 15px;
+      color: #888;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+    .tab-newtab-bar {
+      display: flex;
+      width: 100%;
+      max-width: 600px;
+      background: #1a1a1e;
+      border: 1px solid #2a2a30;
+      border-radius: 50px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .tab-newtab-bar:focus-within { border-color: #c0622a; }
+    .tab-newtab-bar-icon {
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      color: #555;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .tab-newtab-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #e0e0e0;
+      padding: 13px 4px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      outline: none;
+    }
+    .tab-newtab-input::placeholder { color: #555; }
+    .tab-newtab-engine-btn {
+      background: none;
+      border: none;
+      border-left: 1px solid #2a2a30;
+      color: #888;
+      padding: 0 14px;
+      cursor: pointer;
+      transition: color 0.2s;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+    }
+    .tab-newtab-engine-btn:hover { color: #c0622a; }
+    .tab-newtab-go {
+      background: transparent;
+      border: none;
+      color: #888;
+      padding: 0 20px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+    .tab-newtab-go:hover { color: #c0622a; }
+    .tab-newtab-quicklinks {
+      display: flex;
+      gap: 16px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    
+    .landing-engine-btn {
+      background: none;
+      border: none;
+      border-left: 1px solid #2a2a30;
+      color: #888;
+      padding: 0 14px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: color 0.2s;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+    }
+    .landing-engine-btn:hover { color: #c0622a; }
+
+    #landing-engine-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0e0e14;
+      border: 1px solid var(--border-bright);
+      border-radius: 10px;
+      padding: 6px;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 9999;
+      min-width: 170px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    #landing-engine-dropdown.open { display: flex; }
+
+    
+    .btn-bookmark {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--silver);
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .btn-bookmark:hover { background: var(--card-hover); color: #ffd600; }
+    .btn-bookmark.bookmarked { color: #ffd600; border-color: #ffd600; }
+
+    
+    #incognito-badge {
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      background: #1a1a2e;
+      border: 1px solid #7c4dff;
+      color: #b39ddb;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    #incognito-badge.visible { display: block; }
+
+    
+    #global-particles {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #content { position: relative; z-index: 1; }
+    #sidebar { position: relative; z-index: 10; }
+    #topbar { position: relative; z-index: 10; }
+
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 20px;
+      padding-bottom: 28px;
+    }
+
+    .app-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      text-decoration: none;
+    }
+
+    .app-card:hover { transform: translateY(-4px); }
+
+    .app-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #1a1a1e;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+
+    .app-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .app-label {
+      font-size: 12px;
+      color: var(--silver);
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+    
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      padding-bottom: 28px;
+    }
+
+    .settings-card {
+      background: rgba(20,20,26,0.45);
+      border: 1px solid #1a3a2a;
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 0 0 1px #1a3a2a;
+    }
+
+    .settings-card-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--silver-bright);
+      letter-spacing: 1px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .rec-badge {
+      font-family: 'Orbitron', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #2ecc71;
+      background: rgba(46,204,113,0.12);
+      border: 1px solid rgba(46,204,113,0.4);
+      border-radius: 20px;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+
+    .settings-card-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .settings-btn-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .s-btn {
+      background: transparent;
+      border: 1px solid #2a2a36;
+      color: var(--silver);
+      padding: 7px 18px;
+      border-radius: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .s-btn:hover { background: rgba(255,255,255,0.05); border-color: var(--border-bright); color: var(--silver-bright); }
+    .s-btn.active { border-color: #2ecc71; color: #2ecc71; background: transparent; }
+
+    .s-input {
+      background: #111118;
+      border: 1px solid #2a2a36;
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+
+    .s-input:focus { border-color: #2ecc71; }
+    .s-input::placeholder { color: var(--text-dim); }
+
+    .s-select {
+      background: #111118;
+      border: 1px solid #2a2a36;
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      outline: none;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    /* ── Cloud Gaming View ── */
+    .cg-hero {
+      background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 40%, #0a1a2e 100%);
+      border: 1px solid #2a1a4a;
+      border-radius: 16px;
+      padding: 48px 44px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cg-hero::before {
+      content: '';
+      position: absolute;
+      top: -60%;
+      right: -15%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(124,77,255,0.12), transparent 70%);
+      pointer-events: none;
+    }
+    .cg-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -40%;
+      left: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(0,229,255,0.08), transparent 70%);
+      pointer-events: none;
+    }
+    .cg-hero h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: 32px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00e5ff, #7c4dff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 4px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .cg-hero p {
+      color: #78909c;
+      font-size: 16px;
+      max-width: 520px;
+      line-height: 1.7;
+      position: relative;
+    }
+    .cg-hero-badges {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .cg-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(124,77,255,0.1);
+      border: 1px solid rgba(124,77,255,0.25);
+      color: #b39ddb;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-family: 'Orbitron', monospace;
+      letter-spacing: 1px;
+    }
+    .cg-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .cg-stat {
+      background: rgba(20,20,30,0.6);
+      border: 1px solid #1e1e3a;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .cg-stat:hover {
+      border-color: #7c4dff;
+      transform: translateY(-2px);
+    }
+    .cg-stat-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00e5ff, #7c4dff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cg-stat-label {
+      font-size: 11px;
+      color: #546e7a;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+    .cg-category-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .cg-tab {
+      background: rgba(20,20,30,0.5);
+      border: 1px solid #1e1e3a;
+      color: #78909c;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cg-tab:hover {
+      border-color: #7c4dff;
+      color: #b39ddb;
+    }
+    .cg-tab.active {
+      background: rgba(124,77,255,0.15);
+      border-color: #7c4dff;
+      color: #e0e0ff;
+    }
+    .cg-search-bar {
+      display: flex;
+      margin-bottom: 24px;
+      background: rgba(20,20,30,0.5);
+      border: 1px solid #1e1e3a;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .cg-search-bar:focus-within {
+      border-color: #7c4dff;
+    }
+    .cg-search-bar input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #cfd8dc;
+      padding: 12px 18px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      outline: none;
+    }
+    .cg-search-bar input::placeholder { color: #37474f; }
+    .cg-search-icon {
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      color: #37474f;
+      font-size: 16px;
+    }
+    .cg-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 36px;
+    }
+
+    /* ── Movies ── */
+    .movie-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 18px;
+      margin-top: 16px;
+    }
+    .movie-tile {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-bright);
+      background: var(--card-bg);
+      cursor: pointer;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: flex-end;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .movie-tile:hover {
+      transform: translateY(-3px);
+      border-color: var(--silver);
+    }
+    .movie-tile-label {
+      width: 100%;
+      padding: 10px 8px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.85), rgba(0,0,0,0));
+      color: var(--silver-bright);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    .movie-watch-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 5000;
+      align-items: center;
+      justify-content: center;
+    }
+    .movie-watch-overlay.open { display: flex; }
+
+    .movie-watch-box {
+      background: var(--sidebar-bg);
+      border: 1px solid var(--border-bright);
+      border-radius: 10px;
+      overflow: hidden;
+      width: 640px;
+      max-width: 92vw;
+    }
+    .movie-watch-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      letter-spacing: 1px;
+      color: var(--silver-bright);
+      font-family: 'Orbitron', monospace;
+    }
+    .movie-watch-close { cursor: pointer; color: var(--silver-dim); }
+    .movie-watch-close:hover { color: var(--silver-bright); }
+    .movie-watch-frame {
+      width: 640px;
+      height: 480px;
+      max-width: 92vw;
+    }
+    .movie-watch-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+    .cg-card {
+      background: rgba(16,16,28,0.7);
+      border: 1px solid #1e1e3a;
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+      display: block;
+      position: relative;
+    }
+    .cg-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #00e5ff, #7c4dff, #00e5ff);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      padding: 1px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 0;
+    }
+    .cg-card:hover::before { opacity: 1; }
+    .cg-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(124,77,255,0.15), 0 0 0 1px rgba(124,77,255,0.2);
+    }
+    .cg-card-thumb {
+      width: 100%;
+      aspect-ratio: 16/10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      background: linear-gradient(135deg, #0e0e1e, #141428);
+      border-bottom: 1px solid #1e1e3a;
+      position: relative;
+      overflow: hidden;
+    }
+    .cg-card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cg-card-platform {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.7);
+      border: 1px solid rgba(124,77,255,0.3);
+      color: #b39ddb;
+      font-size: 9px;
+      font-family: 'Orbitron', monospace;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .cg-card-live {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(255,23,68,0.85);
+      color: #fff;
+      font-size: 9px;
+      font-family: 'Orbitron', monospace;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .cg-card-live::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      border-radius: 50%;
+      animation: cgPulse 1.5s infinite;
+    }
+    @keyframes cgPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .cg-card-info {
+      padding: 14px 16px;
+    }
+    .cg-card-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: #e0e8ef;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .cg-card-genre {
+      font-size: 12px;
+      color: #546e7a;
+      letter-spacing: 1px;
+    }
+    .cg-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .cg-card-players {
+      font-size: 11px;
+      color: #7c4dff;
+      font-family: 'Orbitron', monospace;
+    }
+    .cg-card-rating {
+      font-size: 11px;
+      color: #ffd600;
+      letter-spacing: 1px;
+    }
+    .cg-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    .cg-feature {
+      background: rgba(16,16,28,0.5);
+      border: 1px solid #1e1e3a;
+      border-radius: 12px;
+      padding: 24px 20px;
+      text-align: center;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .cg-feature:hover {
+      border-color: #7c4dff;
+      transform: translateY(-2px);
+    }
+    .cg-feature-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    .cg-feature-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #e0e8ef;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .cg-feature-desc {
+      font-size: 12px;
+      color: #546e7a;
+      line-height: 1.5;
+    }
+    .cg-platforms-row {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .cg-platform-card {
+      background: rgba(16,16,28,0.5);
+      border: 1px solid #1e1e3a;
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.25s;
+      text-decoration: none;
+      flex: 1;
+      min-width: 200px;
+    }
+    .cg-platform-card:hover {
+      border-color: #7c4dff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(124,77,255,0.1);
+    }
+    .cg-platform-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(124,77,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .cg-platform-info {
+      flex: 1;
+    }
+    .cg-platform-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: #e0e8ef;
+      letter-spacing: 1px;
+    }
+    .cg-platform-desc {
+      font-size: 12px;
+      color: #546e7a;
+      margin-top: 2px;
+    }
+    @media (max-width: 768px) {
+      .cg-stats { grid-template-columns: repeat(2, 1fr); }
+      .cg-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+      .cg-features { grid-template-columns: 1fr; }
+    }
+
+    
+    #tool-topbar {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 220px;
+      right: 0;
+      height: 42px;
+      background: #101014;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      padding: 0 12px;
+      gap: 10px;
+      z-index: 9999;
+    }
+    #tool-topbar.visible { display: flex; }
+    #tool-topbar-title {
+      flex: 1;
+      font-family: 'Orbitron', monospace;
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: var(--silver);
+    }
+    #tool-close-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--silver);
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    #tool-close-btn:hover { background: #3a1a1a; border-color: #ef5350; color: #ef5350; }
+    #tool-fullscreen-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--silver);
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    #tool-fullscreen-btn:hover { background: var(--card-hover); border-color: var(--border-bright); }
+    #tool-iframe-container {
+      display: none;
+      position: fixed;
+      top: 42px;
+      left: 220px;
+      right: 0;
+      bottom: 0;
+      z-index: 9998;
+      background: #000;
+    }
+    #tool-iframe-container.visible { display: block; }
+    #tool-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+
+
+<canvas id="global-particles"></canvas>
+
+<div id="tool-topbar">
+  <span id="tool-topbar-title">TOOL</span>
+  <button id="tool-fullscreen-btn" onclick="toolFullscreen()" title="Fullscreen">⛶</button>
+  <button id="tool-close-btn" onclick="closeTool()" title="Close">✕</button>
+</div>
+
+<div id="tool-iframe-container">
+  <iframe id="tool-iframe" allowfullscreen></iframe>
+</div>
+
+<button id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">‹</button>
+
+<div id="sidebar">
+  <div id="logo">
+    <h1>WILLIE</h1>
+    <span>join our dsc for more education games<a href="https://discord.gg/vDDnt9QRjZ" target="_blank" style="color: #7289da; text-decoration: none;">here</a></span>
+  </div>
+  <nav>
+    <div class="nav-section-label">Menu</div>
+    
+    <div class="nav-item active" onclick="showView('home')">
+      <span class="icon">
+        <img src="home.svg" alt="" width="16" height="16" style="filter: invert(1); vertical-align: middle;">
+      </span> 
+      Home
+    </div>
+    
+    <div class="nav-item" onclick="showView('games')">
+      <span class="icon">
+        <img src="game.svg" alt="" width="16" height="16" style="vertical-align: middle;">
+      </span> 
+      GXMES
+      <span class="nav-badge" id="game-count">200+</span>
+    </div>
+    
+    <div class="nav-item" onclick="showView('webapps')">
+      <span class="icon">
+        <img src="Apps.svg" alt="" width="16" height="16" style="filter: invert(1); vertical-align: middle;">
+      </span> 
+      ꛎꛤꛤꕷ
+    </div>
+    
+    <div class="nav-item" onclick="showView('apps')">
+      <span class="icon">⌬</span> 𐌕ꝊꝊ𐌋𐌔
+    </div>
+    
+    <div class="nav-item" onclick="showView('cloudgaming')">
+      <span class="icon" style="font-size:16px;">☁</span> Movies
+    </div>
+    
+    <div class="nav-item" onclick="showView('proxy')">
+      <span class="icon">
+        <img src="proxy.svg" alt="" width="16" height="16" style="filter: invert(1); vertical-align: middle;">
+      </span> 
+      browser
+    </div>
+    
+    <div class="nav-item" onclick="showView('history')">
+      <span class="icon">
+        <img src="history.svg" alt="" width="16" height="16" style="filter: invert(1); vertical-align: middle;">
+      </span> 
+      History
+    </div>
+    
+    <div class="nav-item" onclick="showView('bookmarks')">
+      <span class="icon">★</span> Bookmarks
+    </div>
+    
+    <div class="nav-item" onclick="showView('settings')">
+      <span class="icon">
+        <img src="settings.svg" alt="" width="16" height="16" style="filter: invert(1); vertical-align: middle;">
+      </span>
+      Settings
+    </div>
+  </nav>
+  
+  <div id="sidebar-bottom">
+    <div class="nav-item" style="font-size:12px; color: var(--text-dim);">
+      <span class="icon">◌</span> Willie Games v2
+    </div>
+  </div>
+</div>
+<div id="main">
+  <div id="topbar">
+    <h2 id="page-title">Home</h2>
+    <div id="topbar-widgets" style="display:flex;align-items:center;gap:14px;margin-left:auto;margin-right:12px;">
+      <div id="topbar-clock" style="font-family:'Orbitron',monospace;font-size:12px;color:var(--silver);letter-spacing:2px;"></div>
+      <div id="topbar-battery" style="display:flex;align-items:center;gap:5px;font-family:'Orbitron',monospace;font-size:11px;color:var(--silver);letter-spacing:1px;">
+        <svg id="battery-icon" width="22" height="12" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.5" y="0.5" width="18" height="11" rx="2" stroke="currentColor" stroke-width="1"/>
+          <rect id="battery-fill" x="2" y="2" width="14" height="8" rx="1" fill="currentColor"/>
+          <rect x="19" y="3.5" width="2.5" height="5" rx="1" fill="currentColor"/>
+        </svg>
+        <span id="battery-pct">--</span>
+        <span id="battery-charging" style="display:none;color:#66bb6a">⚡</span>
+      </div>
+    </div>
+    <input type="text" id="search" placeholder="Search games..." oninput="filterGames(this.value)" />
+  </div>
+
+  <div id="content">
+
+    
+    <div class="view active" id="view-home">
+      <div class="hero">
+        <h2>WILLIE GXMES V2</h2>
+        <h1>last updated: 9/15/2026 10pm</h1>
+        <p>educational GXMES K12</p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-games">200+</div>
+          <div class="stat-label">GXMES</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">coming soon</div>
+          <div class="stat-label">more education</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">better then most websites</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-viewers">1</div>
+          <div class="stat-label">Online Now</div>
+        </div>
+      </div>
+      <div class="section-title">Ɠ𐤠𐒄ƸⳜ we have</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+        <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:8px;">
+          <kbd style="background:var(--border-bright);color:var(--silver-bright);padding:2px 7px;border-radius:4px;font-family:'Orbitron',monospace;font-size:11px;">B</kbd>
+          press to open browser
+        </div>
+      </div>
+      <div class="games-grid" id="featured-grid"></div>
+      <div id="recently-played-section" style="display:none;">
+        <div class="section-title">Recently Played</div>
+        <div class="games-grid" id="recently-played-grid"></div>
+      </div>
+      <div id="favorites-section" style="display:none;">
+        <div class="section-title">Favorites</div>
+        <div class="games-grid" id="favorites-grid"></div>
+      </div>
+    </div>
+
+    
+    <div class="view" id="view-games">
+      <div class="section-title">All Games</div>
+      <div class="games-grid" id="all-games-grid"></div>
+      <div class="section-title" style="margin-top:24px">Seraph Games</div>
+      <div class="games-grid" id="seraph-grid"></div>
+    </div>
+
+    
+    
+    <div class="view" id="view-webapps">
+      <div class="section-title">socials &amp; apps</div>
+      <div class="apps-grid">
+        <a class="app-card" onclick="proxyNav('https://chat.openai.com')">
+          <div class="app-icon" style="background:#000;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://cdn.oaistatic.com/assets/favicon-o20kmmos.svg" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">ChatGPT</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://discord.com/app')">
+          <div class="app-icon" style="background:#5865f2;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://www.svgrepo.com/show/349338/discord.svg" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Discord</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.nvidia.com/en-us/geforce-now/')">
+          <div class="app-icon" style="background:#76b900;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://images.icon-icons.com/3053/PNG/512/geforce_now_macos_bigsur_icon_190147.png" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">GeForce NOW</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.newgrounds.com')">
+          <div class="app-icon" style="background:#f5a623;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://art.ngfiles.com/images/1949000/1949657_s1r-c0w_newgrounds-logo-but-without-tank-and-soldier.png?f1626203293" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Newgrounds</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://proton.me/mail')">
+          <div class="app-icon" style="background:#6d4aff;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/proton-mail-icon.png" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Proton Mail</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://appetize.io')">
+          <div class="app-icon" style="background:#3ddc84;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://avatars.githubusercontent.com/u/12185858?s=200&v=4" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Android</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.primevideo.com')">
+          <div class="app-icon" style="background:#232f3e;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlGIq3u-4i7ZVBq6R8_lIv2k7MW8QnxDXjBA&s" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Movies</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://web.snapchat.com')">
+          <div class="app-icon" style="background:#fffc00;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN8IOXe5HdScykejDvascO_0JvYiegi7qQf_kl3xHxICdwS3w:https://png.pngtree.com/element_our/sm/20180626/sm_5b321c9cb2d25.jpg&s?semt=ais_hybrid&w=740&q=80" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Snapchat</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.tiktok.com')">
+          <div class="app-icon" style="background:#000;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://pngimg.com/uploads/tiktok/tiktok_PNG3.png" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">TikTok</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.twitch.tv')">
+          <div class="app-icon" style="background:#9147ff;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbsOnN3YJTwEk6jdQS3c6r-b9j-QpPvssilw&s" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Twitch</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://vscode.dev')">
+          <div class="app-icon" style="background:#0078d4;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://vscode.dev/static/stable/favicon.ico" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">VS Code</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.youtube.com')">
+          <div class="app-icon" style="background:#ff0000;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://www.youtube.com/favicon.ico" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">YouTube</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://soundcloud.com')">
+          <div class="app-icon" style="background:#ff5500;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI_9iR3oO-2aewI-UeAQRqg0gEEqmRhdBMyrieN8hXvu0fmjg:https://png.pngtree.com/element_our/png/20180827/soundcloud-music-stream-social-media-icon-png_71808.jpg&s" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">SoundCloud</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.piskelapp.com')">
+          <div class="app-icon" style="background:#c0392b;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://cdn2.steamgriddb.com/grid/94b82c6835efa2ee3c86c1d126dba81d.png" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Piskel</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.webtoons.com')">
+          <div class="app-icon" style="background:#00d564;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs_r8unX_hjIJGKDa23iVc-Xj6gh-yLFKY1w&s" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Webtoon</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.pinterest.com')">
+          <div class="app-icon" style="background:#e60023;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJjSZcYEnndhn9RvjJusPNh1Ccyusvl77M4A&s" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Pinterest</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://open.spotify.com')">
+          <div class="app-icon" style="background:#1db954;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Spotify</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.instagram.com')">
+          <div class="app-icon" style="background:#833ab4;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://png.pngtree.com/element_our/sm/20180630/sm_5b37de3263964.jpg" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Instagram</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://x.com')">
+          <div class="app-icon" style="background:#000;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://static.vecteezy.com/system/resources/thumbnails/034/716/139/small_2x/x-new-twitter-logo-free-png.png" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">X / Twitter</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.reddit.com')">
+          <div class="app-icon" style="background:#ff4500;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://static.vecteezy.com/system/resources/previews/018/930/474/non_2x/reddit-logo-reddit-icon-transparent-free-png.png" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Reddit</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.roblox.com')">
+          <div class="app-icon" style="background:#e00;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Roblox_Logo_2025.png" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Roblox</span>
+        </a>
+        <a class="app-card" onclick="proxyNav('https://www.netflix.com')">
+          <div class="app-icon" style="background:#141414;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://static.vecteezy.com/system/resources/previews/017/396/804/non_2x/netflix-mobile-application-logo-free-png.png" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'"/></div>
+          <span class="app-label">Netflix</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="view" id="view-apps">
+      <div class="section-title">Tools</div>
+      <div class="apps-grid">
+        <a class="app-card" onclick="toolNav('https://cdn.jsdelivr.net/gh/CloudMoonApp/web@main/260521.svg')">
+          <div class="app-icon" style="background:#1a1a2e;border-radius:12px;padding:6px;display:flex;align-items:center;justify-content:center"><img src="https://cdn.jsdelivr.net/gh/CloudMoonApp/web@main/260521.svg" width="44" height="44" style="border-radius:8px;object-fit:contain" onerror="this.style.display='none'"/></div>
+          <span class="app-label">Cloud Gaming</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/calculator/index.html')">
+          <div class="app-icon" style="background:#1a1a2e;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">calculator</div>
+          <span class="app-label">Calculator</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/emulatorjs/index.html')">
+          <div class="app-icon" style="background:#1a1a2e;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">EmulatorJS</div>
+          <span class="app-label">EmulatorJS</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/etchasketch/index.html')">
+          <div class="app-icon" style="background:#e00;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">Etch a sketch</div>
+          <span class="app-label">Etch A Sketch</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/fluidsim/index.html')">
+          <div class="app-icon" style="background:#0078d4;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">fluid sim</div>
+          <span class="app-label">Fluid Sim</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/godoblocks/index.html')">
+          <div class="app-icon" style="background:#478cbf;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">godo blocks</div>
+          <span class="app-label">Godo Blocks</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/htmlcoder/index.html')">
+          <div class="app-icon" style="background:#e34c26;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">HTML coder</div>
+          <span class="app-label">HTML Coder</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/ruffle/index.html')">
+          <div class="app-icon" style="background:#ff0;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">ruffle</div>
+          <span class="app-label">Ruffle</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/thirtydollarwebsite/index.html')">
+          <div class="app-icon" style="background:#ff5500;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">soundboard</div>
+          <span class="app-label">30$ Website</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/turbowarp/index.html')">
+          <div class="app-icon" style="background:#ff6680;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">TurboWarp</div>
+          <span class="app-label">TurboWarp</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/turbowarppkg/index.html')">
+          <div class="app-icon" style="background:#ff6680;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">TurboWarp packager</div>
+          <span class="app-label">TurboWarp Packager</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/turbowarpunpkg/index.html')">
+          <div class="app-icon" style="background:#607d8b;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">TurboWarp Unpkg</div>
+          <span class="app-label">TurboWarp Unpkg</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/v86/index.html')">
+          <div class="app-icon" style="background:#222;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">v86 (x86 VM)</div>
+          <span class="app-label">v86 (x86 VM)</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/weavesilk/index.html')">
+          <div class="app-icon" style="background:#6d4aff;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">weave silk</div>
+          <span class="app-label">Weave Silk</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/webretro/index.html')">
+          <div class="app-icon" style="background:#9147ff;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">WebRetro</div>
+          <span class="app-label">WebRetro</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/windows11/index.html')">
+          <div class="app-icon" style="background:#0078d4;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">windows 11</div>
+          <span class="app-label">Windows 11</span>
+        </a>
+        <a class="app-card" onclick="toolNav('https://ijnfem.github.io/seraph/apps/zipopener/index.html')">
+          <div class="app-icon" style="background:#f5a623;border-radius:12px;font-size:32px;display:flex;align-items:center;justify-content:center">Zip opener</div>
+          <span class="app-label">Zip Opener</span>
+        </a>
+      </div>
+    </div>
+
+    
+    <div class="view" id="view-proxy">
+
+      
+      <div id="proxy-landing">
+        <canvas id="proxy-particles"></canvas>
+        <div class="proxy-landing-inner">
+          <div class="proxy-landing-title">Willie Browser</div>
+          <div class="proxy-landing-sub">browse ANYTHING</div>
+          <div style="position:relative;width:100%;">
+          <div class="proxy-landing-bar">
+            <span class="proxy-landing-bar-icon">⌯⌲</span>
+            <input type="text" id="proxy-url" placeholder="Search or enter URL" />
+            <button class="landing-engine-btn" id="landing-engine-btn" onclick="toggleLandingEngine(event)" title="Choose asearch engine"><img class="engine-btn-logo" src="https://www.google.com/favicon.ico" alt="Google" style="width:16px;height:16px;object-fit:contain;border-radius:3px;flex-shrink:0;"/> <span class="engine-label-span">Google</span></button>
+            <button class="proxy-landing-go" onclick="loadProxy()">→</button>
+          </div>
+          <div id="landing-engine-dropdown">
+            <div class="engine-option" data-engine="google" onclick="setEngine('google',this)"><span class="engine-option-icon"><img src="https://www.google.com/favicon.ico" alt="Google"/></span>Google</div>
+            <div class="engine-option" data-engine="brave" onclick="setEngine('brave',this)"><span class="engine-option-icon"><img src="https://brave.com/static-assets/images/brave-favicon.png" alt="Brave"/></span>Brave</div>
+            <div class="engine-option" data-engine="duckduckgo" onclick="setEngine('duckduckgo',this)"><span class="engine-option-icon"><img src="https://duckduckgo.com/favicon.ico" alt="DuckDuckGo"/></span>DuckDuckGo</div>
+            <div class="engine-option" data-engine="bing" onclick="setEngine('bing',this)"><span class="engine-option-icon"><img src="https://www.bing.com/favicon.ico" alt="Bing"/></span>Bing</div>
+            <div class="engine-option" data-engine="yahoo" onclick="setEngine('yahoo',this)"><span class="engine-option-icon"><img src="https://s.yimg.com/rz/l/favicon.ico" alt="Yahoo"/></span>Yahoo</div>
+            <div class="engine-option" data-engine="ecosia" onclick="setEngine('ecosia',this)"><span class="engine-option-icon"><img src="https://www.ecosia.org/favicon.ico" alt="Ecosia"/></span>Ecosia</div>
+          </div>
+          </div>
+          <div class="proxy-quicklinks">
+            <a class="proxy-quicklink" onclick="quickNav('https://youtube.com')">
+              <div class="proxy-quicklink-icon"><img src="https://static.vecteezy.com/system/resources/thumbnails/042/127/234/small/white-square-bordered-youtube-logo-on-transparent-background-free-png.png"/></div>
+              <span class="proxy-quicklink-label">YouTube</span>
+            </a>
+            <a class="proxy-quicklink" onclick="quickNav('https://tiktok.com')">
+              <div class="proxy-quicklink-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSskn3UG5PHzksP0bC2GNp245KFrsP6mhxweg&s"/></div>
+              <span class="proxy-quicklink-label">TikTok</span>
+            </a>
+            <a class="proxy-quicklink" onclick="quickNav('https://discord.com')">
+              <div class="proxy-quicklink-icon"><img src="https://pngimg.com/uploads/discord/discord_PNG8.png"/></div>
+              <span class="proxy-quicklink-label">Discord</span>
+            </a>
+            <a class="proxy-quicklink" onclick="quickNav('https://chat.openai.com')">
+              <div class="proxy-quicklink-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRt_I0AqTbvaxxFCoEWH_SZP49jpBiTMiCkCA&s"/></div>
+              <span class="proxy-quicklink-label">ChatGPT</span>
+            </a>
+            <a class="proxy-quicklink" onclick="quickNav('https://twitch.tv')">
+              <div class="proxy-quicklink-icon"><img src="https://cdn.m7g.twitch.tv/ba46b4e5e395b11efd34/assets/uploads/03-glitch.jpg"/></div>
+              <span class="proxy-quicklink-label">Twitch</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      
+      <div id="proxy-browser">
+        
+        <div id="proxy-tabbar">
+          
+          <button id="proxy-tab-new" onclick="proxyNewTab()" title="New tab">+</button>
+        </div>
+        <div class="proxy-bar">
+          <button class="nav-btn" onclick="proxyBack()" title="Back">&#8592;</button>
+          <button class="nav-btn" onclick="proxyForward()" title="Forward">&#8594;</button>
+          <button class="nav-btn" onclick="proxyRefresh()" title="Refresh">&#8635;</button>
+          <input type="text" id="proxy-url-bar" placeholder="Enter a URL like google.com" />
+          
+          <div style="position:relative;flex-shrink:0;">
+            <button class="engine-picker-btn" id="bar-engine-btn" onclick="toggleBarEngine(event)" title="Search engine"><img class="engine-btn-logo" src="https://www.google.com/favicon.ico" alt="Google" style="width:16px;height:16px;object-fit:contain;border-radius:3px;flex-shrink:0;"/> <span class="engine-label-span">Google</span></button>
+            <div id="engine-dropdown">
+              <div class="engine-option" data-engine="google" onclick="setEngine('google',this)"><span class="engine-option-icon"><img src="https://www.google.com/favicon.ico" alt="Google"/></span>Google</div>
+              <div class="engine-option" data-engine="brave" onclick="setEngine('brave',this)"><span class="engine-option-icon"><img src="https://brave.com/static-assets/images/brave-favicon.png" alt="Brave"/></span>Brave</div>
+              <div class="engine-option" data-engine="duckduckgo" onclick="setEngine('duckduckgo',this)"><span class="engine-option-icon"><img src="https://duckduckgo.com/favicon.ico" alt="DuckDuckGo"/></span>DuckDuckGo</div>
+              <div class="engine-option" data-engine="bing" onclick="setEngine('bing',this)"><span class="engine-option-icon"><img src="https://www.bing.com/favicon.ico" alt="Bing"/></span>Bing</div>
+              <div class="engine-option" data-engine="yahoo" onclick="setEngine('yahoo',this)"><span class="engine-option-icon"><img src="https://s.yimg.com/rz/l/favicon.ico" alt="Yahoo"/></span>Yahoo</div>
+              <div class="engine-option" data-engine="ecosia" onclick="setEngine('ecosia',this)"><span class="engine-option-icon"><img src="https://www.ecosia.org/favicon.ico" alt="Ecosia"/></span>Ecosia</div>
+            </div>
+          </div>
+          <button class="btn-bookmark" id="proxy-bookmark-btn" onclick="toggleBookmark()" title="Bookmark">☆</button>
+          <button class="btn-home" onclick="proxyHome()" title="Home">⌂</button>
+          <button class="nav-btn" onclick="proxyFullscreen()" id="proxy-fs-btn" title="Fullscreen">⛶</button>
+        </div>
+        <div id="proxy-frame-container">
+          
+        </div>
+      </div>
+
+    </div>
+
+    
+    <!-- Movies View -->
+    <div class="view" id="view-cloudgaming">
+      <div class="section-title">Movies</div>
+      <div class="movie-grid" id="movie-grid"></div>
+    </div>
+
+    <!-- Movie Watch Modal -->
+    <div class="movie-watch-overlay" id="movie-watch-overlay">
+      <div class="movie-watch-box">
+        <div class="movie-watch-header">
+          <span id="movie-watch-title"></span>
+          <span class="movie-watch-close" onclick="closeMovieWatch()">✕</span>
+        </div>
+        <div class="movie-watch-frame" id="movie-watch-frame"></div>
+      </div>
+    </div>
+
+    <div class="view" id="view-history">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="section-title" style="margin:0">History</div>
+        <button class="s-btn" onclick="clearHistory()">Clear All</button>
+      </div>
+      <div class="hb-list" id="history-list"></div>
+    </div>
+
+    
+    <div class="view" id="view-bookmarks">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="section-title" style="margin:0">Bookmarks</div>
+        <button class="s-btn" onclick="clearBookmarks()">Clear All</button>
+      </div>
+      <div class="hb-list" id="bookmarks-list"></div>
+    </div>
+
+    
+    <div class="view" id="view-settings">
+      <div class="section-title">Settings</div>
+      <div class="settings-grid">
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">tab cloak</div>
+          <select class="s-select" id="cloak-preset">
+            <option value="none">None</option>
+            <option value="google">Google</option>
+            <option value="classroom">Google Classroom</option>
+            <option value="docs">Google Docs</option>
+          </select>
+          <button class="s-btn" onclick="applyTabCloak()">set cloak</button>
+          <button class="s-btn" onclick="resetCloak()">reset cloak</button>
+        </div>
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">custom cloak</div>
+          <input class="s-input" id="custom-cloak-title" placeholder="title" />
+          <input class="s-input" id="custom-cloak-icon" placeholder="favicon URL" />
+          <button class="s-btn" onclick="applyCustomCloak()">set cloak</button>
+        </div>
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">themes</div>
+          <select class="s-select" id="theme-select" onchange="changeTheme(this.value)">
+            <option value="silver">Default</option>
+            <option value="blue">Steel Blue</option>
+            <option value="green">Neon Green</option>
+            <option value="orange">Burnt Orange</option>
+            <option value="purple">Neon Purple</option>
+            <option value="red">Crimson Red</option>
+            <option value="pink">Hot Pink</option>
+            <option value="teal">Teal</option>
+            <option value="gold">Gold</option>
+          </select>
+        </div>
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">particles</div>
+          <div class="settings-btn-row">
+            <button class="s-btn" id="particles-enable-btn" onclick="setParticles(true)">enable</button>
+            <button class="s-btn" id="particles-disable-btn" onclick="setParticles(false)">disable</button>
+          </div>
+        </div>
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">mobile screen sizer</div>
+          <div class="settings-btn-row">
+            <button class="s-btn" id="mobile-enable-btn" onclick="setMobile(true)">enable</button>
+            <button class="s-btn" id="mobile-disable-btn" onclick="setMobile(false)">disable</button>
+          </div>
+        </div>
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">games sorted a - z</div>
+          <div class="settings-btn-row">
+            <button class="s-btn" id="sort-enable-btn" onclick="setSortGames(true)">enable</button>
+            <button class="s-btn" id="sort-disable-btn" onclick="setSortGames(false)">disable</button>
+          </div>
+        </div>
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">anti deledao</div>
+          <div class="settings-card-sub">adds a static image over your game that deledao game detection cant see through. might not always work.(DOES NOT WORK)</div>
+          <div class="settings-btn-row">
+            <button class="s-btn" id="deledao-enable-btn" onclick="setDeledao(true)">enable</button>
+            <button class="s-btn" id="deledao-disable-btn" onclick="setDeledao(false)">disable</button>
+          </div>
+        </div>
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">about:blank cloaker <span class="rec-badge">recommended</span></div>
+          <div class="settings-card-sub">double click the button to cloak</div>
+          <div class="settings-btn-row">
+            <button class="s-btn" ondblclick="aboutBlankCloak()">cloak</button>
+          </div>
+        </div>
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">panic key</div>
+          <div class="settings-card-sub">press any key to set it as the panic key</div>
+          <input class="s-input" id="panic-key-display" placeholder="Current: Escape" readonly style="cursor:pointer;text-align:center;" onclick="listenForPanicKey()" />
+          <button class="s-btn" onclick="resetPanicKey()">reset to Escape</button>
+        </div>
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">search engine</div>
+          <select class="s-select" id="search-engine-select" onchange="setSearchEngine(this.value)">
+            <option value="google">Google</option>
+            <option value="bing">Bing</option>
+            <option value="duckduckgo">DuckDuckGo</option>
+            <option value="brave">Brave</option>
+          </select>
+        </div>
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">incognito mode <span class="rec-badge">recommended</span></div>
+          <div class="settings-card-sub">clears proxy history on close, disables history tracking(for the gooners)</div>
+          <div class="settings-btn-row">
+            <button class="s-btn" id="incognito-enable-btn" onclick="setIncognito(true)">enable</button>
+            <button class="s-btn" id="incognito-disable-btn" onclick="setIncognito(false)">disable</button>
+          </div>
+        </div>
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">custom background</div>
+          <input class="s-input" id="bg-url-input" placeholder="Image URL or CSS color (e.g. #ff0000)" />
+          <div class="settings-btn-row">
+            <button class="s-btn" onclick="applyBackground()">apply</button>
+            <button class="s-btn" onclick="resetBackground()">reset</button>
+          </div>
+        </div>
+
+
+
+        
+        <div class="settings-card">
+          <div class="settings-card-title">weird text <span class="rec-badge">recommended</span></div>
+          <div class="settings-card-sub">makes text look աɨʀɖ to bypass content blockers usually works</div>
+          <div class="settings-btn-row">
+            <button class="s-btn" id="weirdtext-enable-btn" onclick="setWeirdText(true)">enable</button>
+            <button class="s-btn" id="weirdtext-disable-btn" onclick="setWeirdText(false)">disable</button>
+          </div>
+          <div id="weirdtext-preview" style="display:none;text-align:center;font-size:13px;color:var(--silver);letter-spacing:1px;margin-top:2px;"></div>
+        </div>
+
+        <div class="settings-card">
+          <div class="settings-card-title">cursor color</div>
+          <div class="settings-card-sub">choose your cursor glow color</div>
+          <div class="settings-btn-row">
+            <button class="s-btn" onclick="setCursorColor('#ffffff','rgba(255,255,255,0.6)','rgba(255,255,255,0.25)')" id="cursor-color-white">white</button>
+            <button class="s-btn" onclick="setCursorColor('#00e5ff','rgba(0,229,255,0.6)','rgba(0,229,255,0.25)')" id="cursor-color-cyan">cyan</button>
+            <button class="s-btn" onclick="setCursorColor('#7c4dff','rgba(124,77,255,0.6)','rgba(124,77,255,0.25)')" id="cursor-color-purple">purple</button>
+            <button class="s-btn" onclick="setCursorColor('#ff1744','rgba(255,23,68,0.6)','rgba(255,23,68,0.25)')" id="cursor-color-red">red</button>
+            <button class="s-btn" onclick="setCursorColor('#00e676','rgba(0,230,118,0.6)','rgba(0,230,118,0.25)')" id="cursor-color-green">green</button>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <div class="settings-card-title">cursor size</div>
+          <div class="settings-card-sub">drag to resize your cursor</div>
+          <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+            <span style="font-size:12px;color:var(--text-dim)">small</span>
+            <input type="range" id="cursor-size-slider" min="6" max="24" value="10"
+              style="flex:1;max-width:180px;accent-color:var(--silver);"
+              oninput="setCursorSize(this.value)" />
+            <span style="font-size:12px;color:var(--text-dim)">large</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="incognito-badge"> Incognito Mode</div>
+
+<div id="deledao-overlay" style="display:none;position:fixed;inset:0;z-index:99998;pointer-events:none;">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Google_Classroom_Logo.png/480px-Google_Classroom_Logo.png"
+    style="position:absolute;top:0;left:0;width:1px;height:1px;opacity:0.01;" />
+</div>
+
+<script>
+  const SERAPH = 'https://mspoi.github.io/seraph/games/';
+  const seraphGames = [
+    {name:"Slope",genre:"Runner",emoji:"slope",url:"slope/index.html"},
+    {name:"Subway Surfers",genre:"Runner",emoji:"subway surfers",url:"subwaysurfers/index.html"},
+    {name:"Flappy Bird",genre:"Arcade",emoji:"flappy bird",url:"flappy/index.html"},
+    {name:"Papa's Pizzaria",genre:"Sim",emoji:"papas pizzaria",url:"papaspizzaria/index.html"},
+    {name:"Papa's Burgeria",genre:"Sim",emoji:"papas burgeria",url:"papasburgeria/index.html"},
+    {name:"Super Mario 64",genre:"Platformer",emoji:"super mario 64",url:"sm64/index.html"},
+    {name:"Run 3",genre:"Runner",emoji:"run 3",url:"run3/index.html"},
+    {name:"BitLife",genre:"Sim",emoji:"bitlife",url:"bitlife/index.html"},
+    {name:"Crossy Road",genre:"Arcade",emoji:"crossy road",url:"crossy/index.html"},
+    {name:"Minecraft v1.5.2",genre:"Sandbox",emoji:"minecraft v1.5.2",url:"mc/index.html"},
+    {name:"Cookie Clicker",genre:"Idle",emoji:"cookie clicker",url:"cookieclicker/index.html"},
+    {name:"Temple Run 2",genre:"Runner",emoji:"temple run 2",url:"templerun2/index.html"},
+    {name:"Duck Life 4",genre:"RPG",emoji:"duck life 4",url:"ducklife4/index.html"},
+    {name:"Chrome Dino",genre:"Runner",emoji:"chrome dino",url:"dinogame/index.html"},
+    {name:"Jetpack Joyride",genre:"Arcade",emoji:"jetpack joyride",url:"jetpackjoyride/index.html"},
+    {name:"Retro Bowl",genre:"Sports",emoji:"retro bowl",url:"retrobowl/index.html"},
+    {name:"Fruit Ninja",genre:"Arcade",emoji:"fruit ninja",url:"fruitninja/index.html"},
+    {name:"Doodle Jump",genre:"Arcade",emoji:"doodle jump",url:"doodlejump/index.html"},
+    {name:"2048",genre:"Puzzle",emoji:"2048",url:"2048/index.html"},
+    {name:"Tetris",genre:"Puzzle",emoji:"tetris",url:"tetris/index.html"},
+    {name:"Fancy Pants Adventure",genre:"Platformer",emoji:"fancy pants",url:"fancypantsadventure/index.html"},
+    {name:"Happy Wheels",genre:"Action",emoji:"happy wheels",url:"happywheels/index.html"},
+    {name:"Papa's Hotdoggeria",genre:"Sim",emoji:"papas hotdoggeria",url:"papashotdoggeria/index.html"},
+    {name:"Paper IO 2",genre:"Arcade",emoji:"Paper.io",url:"paperio2/index.html"},
+    {name:"Super Hot",genre:"FPS",emoji:"super hot",url:"superhot/index.html"},
+    {name:"Binding of Isaac",genre:"RPG",emoji:"binding of Isaac",url:"thebindingofisaac/index.html"},
+    {name:"Townscaper",genre:"Sim",emoji:"townscaper",url:"townscaper/index.html"},
+    {name:"Tunnel Rush",genre:"Runner",emoji:"tunnel rush",url:"tunnelrush/index.html"},
+    {name:"Theme Hotel",genre:"Sim",emoji:"Theme hotel",url:"themehotel/index.html"},
+    {name:"Escaping the Prison",genre:"Adventure",emoji:"escaping the prison",url:"escapingtheprison/index.html"},
+    {name:"Stealing the Diamond",genre:"Adventure",emoji:"stealing the diamond",url:"stealingthediamond/index.html"},
+    {name:"Infiltrating the Airship",genre:"Adventure",emoji:"infiltrating the airship",url:"infiltratingtheairship/index.html"},
+    {name:"Fleeing the Complex",genre:"Adventure",emoji:"fleeing the complex",url:"fleeingthecomplex/index.html"},
+    {name:"The Impossible Quiz",genre:"Puzzle",emoji:"the impossible quiz",url:"theimpossiblequiz/index.html"},
+    {name:"The Impossible Quiz 2",genre:"Puzzle",emoji:"the impoosible quiz 2",url:"theimpossiblequiz2/index.html"},
+    {name:"Solitaire",genre:"Card",emoji:"solitare",url:"solitaire/index.html"},
+    {name:"Drift Hunters",genre:"Racing",emoji:"drift hunters",url:"drifthunters/index.html"},
+    {name:"Vex 3",genre:"Platformer",emoji:"vex 3",url:"vex3/index.html"},
+    {name:"Vex 4",genre:"Platformer",emoji:"vex 4",url:"vex4/index.html"},
+    {name:"Vex 6",genre:"Platformer",emoji:"vex 6",url:"vex6/index.html"},
+    {name:"Among Us Fangame",genre:"Action",emoji:"among us fangame",url:"amongus/index.html"},
+    {name:"Edge Surf",genre:"Runner",emoji:"edge surf",url:"surf/index.html"},
+    {name:"Moto X3M",genre:"Racing",emoji:"Mote x3m",url:"motox3m/index.html"},
+    {name:"FNAF 1",genre:"Horror",emoji:"fnaf 1",url:"fnaf/index.html"},
+    {name:"FNAF 2",genre:"Horror",emoji:"fnaf 2",url:"fnaf-2/index.html"},
+    {name:"FNAF 3",genre:"Horror",emoji:"fnaf 3",url:"fnaf-3/index.html"},
+    {name:"FNAF 4",genre:"Horror",emoji:"fnaf 4",url:"fnaf-4/index.html"},
+    {name:"Riddle School",genre:"Adventure",emoji:"riddle school",url:"riddleschool/riddleschool1/index.html"},
+    {name:"Riddle School 2",genre:"Adventure",emoji:"riddle school 2",url:"riddleschool/riddleschool2/index.html"},
+    {name:"Riddle School 3",genre:"Adventure",emoji:"riddle school 3",url:"riddleschool/riddleschool3/index.html"},
+    {name:"Riddle School 4",genre:"Adventure",emoji:"riddle school 4",url:"riddleschool/riddleschool4/index.html"},
+    {name:"Riddle School 5",genre:"Adventure",emoji:"riddle school 5",url:"riddleschool/riddleschool5/index.html"},
+    {name:"Riddle Transfer",genre:"Adventure",emoji:"riddle transfer",url:"riddleschool/riddletransfer/index.html"},
+    {name:"Riddle Transfer 2",genre:"Adventure",emoji:"riddle transfer 2",url:"riddleschool/riddletransfer2/index.html"},
+    {name:"Drift Boss",genre:"Racing",emoji:"drift boss",url:"driftboss/index.html"},
+    {name:"Friday Night Funkin",genre:"Rhythm",emoji:"fnf",url:"fnf/index.html"},
+    {name:"Pac-Man",genre:"Arcade",emoji:"pac-man",url:"pacman/index.html"},
+    {name:"Papa's Pancakeria",genre:"Sim",emoji:"papas pancakeria",url:"papaspancakeria/index.html"},
+    {name:"Rooftop Snipers",genre:"Shooter",emoji:"rooftop snipers",url:"rooftop/index.html"},
+    {name:"Rooftop Snipers 2",genre:"Shooter",emoji:"rooftop snipers 2",url:"rooftop2/index.html"},
+    {name:"Baldi's Basics",genre:"Horror",emoji:"baldis basics",url:"baldisbasics/index.html"},
+    {name:"Bob the Robber 2",genre:"Adventure",emoji:"bob the robber 2",url:"bobtherobber2/index.html"},
+    {name:"Minesweeper",genre:"Puzzle",emoji:"minesweeper",url:"minesweeper/index.html"},
+    {name:"Pokemon Emerald",genre:"RPG",emoji:"pokemon emerald",url:"pokemonemerald/index.html"},
+    {name:"Pokemon Fire Red",genre:"RPG",emoji:"pokemon fire red",url:"pokemonfirered/index.html"},
+    {name:"Pokemon Leaf Green",genre:"RPG",emoji:"pokemon leaf green",url:"pokemonleafgreen/index.html"},
+    {name:"Pokemon Ruby",genre:"RPG",emoji:"pokemon ruby",url:"pokemonruby/index.html"},
+    {name:"Pokemon Sapphire",genre:"RPG",emoji:"pokemon sapphire",url:"pokemonsapphire/index.html"},
+    {name:"Pokemon Diamond",genre:"RPG",emoji:"pokemon diamond",url:"pokemondiamond/index.html"},
+    {name:"Pokemon Platinum",genre:"RPG",emoji:"pokemon platinum",url:"pokemonplatinum/index.html"},
+    {name:"Pokemon SoulSilver",genre:"RPG",emoji:"pokemon soulsilver",url:"pokemonsoulsilver/index.html"},
+    {name:"Pokemon Unbound",genre:"RPG",emoji:"pokemon unbound",url:"pokemonunbound/index.html"},
+    {name:"Pokemon Mystery Dungeon",genre:"RPG",emoji:"pokemon mystery dungeon",url:"pokemonmysterydungeon/index.html"},
+    {name:"Pokemon Stadium",genre:"RPG",emoji:"pokemon stadium",url:"pokemonstadium/index.html"},
+    {name:"Pokemon Snap",genre:"RPG",emoji:"pokemon snap",url:"pokemonsnap/index.html"},
+    {name:"Super Mario Bros",genre:"Platformer",emoji:"super marios bros",url:"supermariobros/index.html"},
+    {name:"Super Mario Bros 2",genre:"Platformer",emoji:"super mario bros 2",url:"supermariobros2/index.html"},
+    {name:"Super Mario Bros 3",genre:"Platformer",emoji:"super mario bros 3",url:"supermariobros3/index.html"},
+    {name:"Super Mario Kart",genre:"Racing",emoji:"super mario kart",url:"supermariokart/index.html"},
+    {name:"Super Mario World",genre:"Platformer",emoji:"super mario world",url:"supermarioworld/index.html"},
+    {name:"Super Mario 64 DS",genre:"Platformer",emoji:"super mario 64 DS",url:"sm64ds/index.html"},
+    {name:"Super Mario Land",genre:"Platformer",emoji:"super maro land",url:"supermarioland/index.html"},
+    {name:"Super Mario Flash",genre:"Platformer",emoji:"super mario flash",url:"supermarioflash/index.html"},
+    {name:"New Super Mario Bros",genre:"Platformer",emoji:"new super mario bros",url:"newsupermariobros/index.html"},
+    {name:"Unfair Mario",genre:"Platformer",emoji:"unfair mario",url:"unfairmario/index.html"},
+    {name:"Mario Kart 64",genre:"Racing",emoji:"Maro kart 64",url:"mariokart64/index.html"},
+    {name:"Mario Kart DS",genre:"Racing",emoji:"maro kart DS",url:"mariokartds/index.html"},
+    {name:"Mario Kart Super Circuit",genre:"Racing",emoji:"mario kart super circuit",url:"mariokartsupercircuit/index.html"},
+    {name:"Mario Party",genre:"Party",emoji:"mario party",url:"marioparty/index.html"},
+    {name:"Mario Party 2",genre:"Party",emoji:"mario party 2",url:"marioparty2/index.html"},
+    {name:"Mario Party 3",genre:"Party",emoji:"mario party 2",url:"marioparty3/index.html"},
+    {name:"Mario Party DS",genre:"Party",emoji:"mario party ds",url:"mariopartyds/index.html"},
+    {name:"Mario Golf",genre:"Sports",emoji:"maro golf ",url:"mariogolf/index.html"},
+    {name:"Mario Tennis",genre:"Sports",emoji:"mario tennis",url:"mariotennis/index.html"},
+    {name:"Mario Combat",genre:"Action",emoji:"mario combat",url:"mariocombat/index.html"},
+    {name:"Paper Mario",genre:"RPG",emoji:"paper mario",url:"papermario/index.html"},
+    {name:"Superstar Saga",genre:"RPG",emoji:"superstar saga",url:"superstarsaga/index.html"},
+    {name:"There Is No Game",genre:"Puzzle",emoji:"there is no game",url:"thereisnogame/index.html"},
+    {name:"World's Hardest Game",genre:"Puzzle",emoji:"worlds harest game",url:"worldshardestgame/index.html"},
+    {name:"Castlevania",genre:"Action",emoji:"castlevania",url:"castlevania/index.html"},
+    {name:"Donkey Kong",genre:"Platformer",emoji:"donkey kong",url:"donkeykong/index.html"},
+    {name:"Donkey Kong 64",genre:"Platformer",emoji:"donkey kong 64",url:"donkeykong64/index.html"},
+    {name:"Donkey Kong Land",genre:"Platformer",emoji:"donkey kong land",url:"donkeykongland/index.html"},
+    {name:"Dr Mario",genre:"Puzzle",emoji:"dr mario",url:"drmario/index.html"},
+    {name:"Metroid",genre:"Action",emoji:"metroid",url:"metroid/index.html"},
+    {name:"Metroid Fusion",genre:"Action",emoji:"metroid fusion",url:"metroidfusion/index.html"},
+    {name:"Legend of Zelda",genre:"Adventure",emoji:"legend of zelda",url:"thelegendofzelda/index.html"},
+    {name:"Ocarina of Time",genre:"Adventure",emoji:"oracin of time",url:"ocarinaoftime/index.html"},
+    {name:"Majora's Mask",genre:"Adventure",emoji:"majoras mask",url:"majorasmask/index.html"},
+    {name:"WarioWare",genre:"Arcade",emoji:"Warioware",url:"warioware/index.html"},
+    {name:"Wario Land 4",genre:"Platformer",emoji:"wario land 4",url:"warioland4/index.html"},
+    {name:"Yoshi's Island",genre:"Platformer",emoji:"yoshis island",url:"yoshisisland/index.html"},
+    {name:"Kirby's Dream Land",genre:"Platformer",emoji:"kirbys dream land",url:"kirbysdreamland/index.html"},
+    {name:"Kirby Mass Attack",genre:"Platformer",emoji:"kirby mass attack",url:"kirbymassattack/index.html"},
+    {name:"Kirby 64",genre:"Platformer",emoji:"kirby 64",url:"kirby64/index.html"},
+    {name:"Banjo Kazooie",genre:"Platformer",emoji:"Banjo kazooie",url:"banjokazooie/index.html"},
+    {name:"Banjo Pilot",genre:"Racing",emoji:"banjo pilot",url:"banjopilot/index.html"},
+    {name:"Star Fox 64",genre:"Action",emoji:"star fox 64",url:"starfox64/index.html"},
+    {name:"GoldenEye 007",genre:"FPS",emoji:"Goldeneye",url:"goldeneye007/index.html"},
+    {name:"F-Zero X",genre:"Racing",emoji:"f-zero",url:"fzerox/index.html"},
+    {name:"Excitebike 64",genre:"Racing",emoji:"excitebike 64",url:"excitebike64/index.html"},
+    {name:"Super Smash Bros",genre:"Fighting",emoji:"super smash bros",url:"supersmashbros/index.html"},
+    {name:"Super Smash Flash",genre:"Fighting",emoji:"super smash flash",url:"supersmashflash/index.html"},
+    {name:"Street Fighter 2",genre:"Fighting",emoji:"street fighter 2",url:"streetfighter2/index.html"},
+    {name:"DBZ Supersonic Warriors",genre:"Fighting",emoji:"dbz supersonic warriors",url:"dbzsupersonicwarriors/index.html"},
+    {name:"Animal Crossing",genre:"Sim",emoji:"annimal crosing",url:"animalcrossingwildworld/index.html"},
+    {name:"Nintendogs",genre:"Sim",emoji:"nintendogs",url:"nintendogs/index.html"},
+    {name:"Golden Sun",genre:"RPG",emoji:"golden sun",url:"goldensun/index.html"},
+    {name:"Fire Emblem",genre:"Strategy",emoji:"fire emblem",url:"fireemblem/index.html"},
+    {name:"Advance Wars",genre:"Strategy",emoji:"advance war",url:"advancewars/index.html"},
+    {name:"Advance Wars 2",genre:"Strategy",emoji:"advanc wars 2",url:"advancewars2/index.html"},
+    {name:"Harvest Moon",genre:"Sim",emoji:"Harvest moon",url:"harvestmoon/index.html"},
+    {name:"Mega Man Zero",genre:"Action",emoji:"mega man zero",url:"megamanzero/index.html"},
+    {name:"Ace Attorney",genre:"Adventure",emoji:"ace attorney",url:"aceattorney/index.html"},
+    {name:"Professor Layton",genre:"Puzzle",emoji:"professor layton",url:"professorlayton/index.html"},
+    {name:"Scribblenauts",genre:"Puzzle",emoji:"scribblenauts",url:"scribblenauts/index.html"},
+    {name:"Metal Gear Solid",genre:"Action",emoji:"metal gear solid",url:"metalgearsolid/index.html"},
+    {name:"Mother 3",genre:"RPG",emoji:"mother 3",url:"mother3/index.html"},
+    {name:"Sonic Advance",genre:"Platformer",emoji:"sonic advance",url:"sonicadvance/index.html"},
+    {name:"Sonic Advance 2",genre:"Platformer",emoji:"sonic advance 2",url:"sonicadvance2/index.html"},
+    {name:"Super Monkey Ball Jr",genre:"Arcade",emoji:"super monkey ball jr",url:"supermonkeyballjr/index.html"},
+    {name:"Ice Climber",genre:"Platformer",emoji:"ice climber",url:"iceclimber/index.html"},
+    {name:"Bomberman",genre:"Action",emoji:"bomberman",url:"bomberman/index.html"},
+    {name:"Worms World Party",genre:"Strategy",emoji:"worms world party ",url:"wormsworldparty/index.html"},
+    {name:"BTD",genre:"Strategy",emoji:"btd",url:"btd/btd/index.html"},
+    {name:"BTD 2",genre:"Strategy",emoji:"btd 2",url:"btd/btd2/index.html"},
+    {name:"BTD 3",genre:"Strategy",emoji:"btd 3",url:"btd/btd3/index.html"},
+    {name:"BTD 4",genre:"Strategy",emoji:"btd 4",url:"btd/btd4/index.html"},
+    {name:"ADOFAI",genre:"Rhythm",emoji:"ADOFAI",url:"adofai/index.html"},
+    {name:"Super Meat Boy",genre:"Platformer",emoji:"super meat boy",url:"supermeatboy/index.html"},
+    {name:"Stickman Hook",genre:"Arcade",emoji:"stickman hook",url:"stickmanhook/index.html"},
+    {name:"Defend the Tank",genre:"Strategy",emoji:"defend the tank",url:"defendthetank/index.html"},
+    {name:"Sort the Court",genre:"Sim",emoji:"=sort the court ",url:"sortthecourt/index.html"},
+    {name:"This Is the Only Level",genre:"Puzzle",emoji:"this is the only level",url:"thisistheonlylevel/index.html"},
+    {name:"Run",genre:"Runner",emoji:"run",url:"run/index.html"},
+    {name:"Run 2",genre:"Runner",emoji:"run 2",url:"run2/index.html"},
+    {name:"Battleships",genre:"Strategy",emoji:"battleships",url:"battleships/index.html"},
+    {name:"Breaking the Bank",genre:"Adventure",emoji:"breaking the bank",url:"breakingthebank/index.html"},
+    {name:"Duck Life",genre:"RPG",emoji:"duck life",url:"ducklife/index.html"},
+    {name:"Duck Life 2",genre:"RPG",emoji:"duck life 2",url:"ducklife2/index.html"},
+    {name:"Duck Life 3",genre:"RPG",emoji:"duck life 3",url:"ducklife3/index.html"},
+    {name:"Duck Life 5",genre:"RPG",emoji:"duck life 5",url:"ducklife5/index.html"},
+    {name:"Duck Life 6",genre:"RPG",emoji:"duck life 6",url:"ducklife6/index.html"},
+    {name:"Line Rider",genre:"Arcade",emoji:"line rider",url:"linerider/index.html"},
+    {name:"Raft Wars",genre:"Action",emoji:"raft wars",url:"raftwars/index.html"},
+    {name:"Raft Wars 2",genre:"Action",emoji:"raft wars 2",url:"raftwars2/index.html"},
+    {name:"Space Invaders",genre:"Arcade",emoji:"space invaders",url:"spaceinvaders/index.html"},
+    {name:"Gun Mayhem",genre:"Shooter",emoji:"gun mayhem",url:"gunmayhem/index.html"},
+    {name:"Gun Mayhem 2",genre:"Shooter",emoji:"gun mayhem 2",url:"gunmayhem2/index.html"},
+    {name:"Gun Mayhem Redux",genre:"Shooter",emoji:"gun mayhem redux",url:"gunmayhemredux/index.html"},
+    {name:"Learn to Fly",genre:"Arcade",emoji:"learn to fly",url:"learntofly/index.html"},
+    {name:"Learn to Fly 2",genre:"Arcade",emoji:"learn to fly 2",url:"learntofly2/index.html"},
+    {name:"Learn to Fly 3",genre:"Arcade",emoji:"learn to fly 3",url:"learntofly3/index.html"},
+    {name:"Fireboy and Watergirl",genre:"Puzzle",emoji:"fireboy and watergirl",url:"fireboywatergirl/index.html"},
+    {name:"Chibi Knight",genre:"RPG",emoji:"chibi knight",url:"chibiknight/index.html"},
+    {name:"Cluster Rush",genre:"Runner",emoji:"cluster rush",url:"clusterrush/index.html"},
+    {name:"Doodle Defender",genre:"Arcade",emoji:"doodle defender",url:"doodledefender/index.html"},
+    {name:"Papa's Scooperia",genre:"Sim",emoji:"papas scooperia",url:"papasscooperia/index.html"},
+    {name:"Papa's Sushiria",genre:"Sim",emoji:"papas slushiria",url:"papassushiria/index.html"},
+    {name:"Papa's Wingeria",genre:"Sim",emoji:"papas wingeria",url:"papaswingeria/index.html"},
+    {name:"Papa's Freezeria",genre:"Sim",emoji:"papas freezeria",url:"papasfreezeria/index.html"},
+    {name:"Papa's Cheeseria",genre:"Sim",emoji:"papas cheeseria",url:"papascheeseria/index.html"},
+    {name:"Papa's Cupcakeria",genre:"Sim",emoji:"papas cupcakeria",url:"papascupcakeria/index.html"},
+    {name:"Papa's Bakeria",genre:"Sim",emoji:"papas bakeria",url:"papasbakeria/index.html"},
+    {name:"Papa's Pastaria",genre:"Sim",emoji:"papas pastaria",url:"papaspastaria/index.html"},
+    {name:"Papa's Donuteria",genre:"Sim",emoji:"papas donuteria",url:"papasdonuteria/index.html"},
+    {name:"Boxing Physics 2",genre:"Fighting",emoji:"boxing physics 2",url:"boxingphysics2/index.html"},
+    {name:"Boxing Random",genre:"Fighting",emoji:"boxing random",url:"boxingrandom/index.html"},
+    {name:"Getaway Shootout",genre:"Action",emoji:"getaway shootout",url:"getawayshootout/index.html"},
+    {name:"Rabbit Samurai",genre:"Action",emoji:"rabbit smurai",url:"rabbitsamurai/index.html"},
+    {name:"Fancy Pants Adventure 2",genre:"Platformer",emoji:"fancy pans",url:"fancypantsadventure2/index.html"},
+    {name:"Tiny Fishing",genre:"Casual",emoji:"tiny fishing",url:"tinyfishing/index.html"},
+    {name:"Big Red Button",genre:"Casual",emoji:"big red button",url:"bigredbutton/index.html"},
+    {name:"Achievement Unlocked",genre:"Puzzle",emoji:"achievement unlocked",url:"achievementunlocked/index.html"},
+    {name:"Achievement Unlocked 2",genre:"Puzzle",emoji:"achievement unlocked 2",url:"achievementunlocked2/index.html"},
+    {name:"Achievement Unlocked 3",genre:"Puzzle",emoji:"achievement unblocked 3",url:"achievementunlocked3/index.html"},
+    {name:"Factory Balls",genre:"Puzzle",emoji:"factory balls",url:"factoryballs/index.html"},
+    {name:"Skywire",genre:"Arcade",emoji:"skywire",url:"skywire/index.html"},
+    {name:"Skywire 2",genre:"Arcade",emoji:"skywire 2",url:"skywire2/index.html"},
+    {name:"Adventure Capitalist",genre:"Idle",emoji:"adventure capitalist",url:"adventurecapitalist/index.html"},
+    {name:"Monkey Mart",genre:"Sim",emoji:"monkey mart",url:"monkeymart/index.html"},
+    {name:"Doom 64",genre:"FPS",emoji:"doom 64",url:"doom64/index.html"},
+    {name:"Bloxors",genre:"Puzzle",emoji:"bloxors",url:"bloxors/index.html"},
+    {name:"Electric Man 2",genre:"Fighting",emoji:"electric man 2",url:"electricman2/index.html"},
+    {name:"Portal",genre:"Puzzle",emoji:"portal",url:"portal/index.html"},
+    {name:"Portal 2",genre:"Puzzle",emoji:"portal 2",url:"portal2/index.html"},
+    {name:"Cell Machine",genre:"Puzzle",emoji:"cell machine",url:"cellmachine/index.html"},
+    {name:"Stickman Boost",genre:"Platformer",emoji:"stickman boost",url:"stickmanboost/index.html"},
+    {name:"Skibidi 1v100",genre:"Action",emoji:"skibidy 1v100",url:"skibidi1v100/index.html"},
+    {name:"Super Smash Bros N64",genre:"Fighting",emoji:"super smash bros N64",url:"supersmashbros/index.html"},
+    {name:"Doge Miner",genre:"Idle",emoji:"doge miner",url:"dogeminer/index.html"},
+    {name:"Tanuki Sunset",genre:"Racing",emoji:"tanuki sunset",url:"tanukisunset/index.html"},
+    {name:"Aquapark Slides",genre:"Arcade",emoji:"aquapark slides",url:"aquaparkslides/index.html"},
+    {name:"Color Switch",genre:"Arcade",emoji:"color switch",url:"colorswitch/index.html"},
+    {name:"Unfair Mario",genre:"Platformer",emoji:"unfair mario",url:"unfairmario/index.html"},
+  ];
+
+  function makeSeraphCard(g) {
+    const fullUrl = SERAPH + g.url;
+    return `<a class="game-card" style="cursor:pointer" onclick="proxyNav('${fullUrl}')">
+      <div class="game-thumb">${g.emoji}</div>
+      <div class="game-info">
+        <div class="game-name">${g.name}</div>
+        <div class="game-genre">${g.genre}</div>
+      </div>
+    </a>`;
+  }
+
+  const games = [
+    {name:"1v1 LOL",genre:"Shooter",emoji:"1v1 lol",path:"https://a456pur.github.io/seraph/games/1v1lol/index.html",useProxy:true},
+    {name:"2048",genre:"Puzzle",emoji:"2048",path:"https://mspoi.github.io/seraph/games/2048/index.html",useProxy:true},
+    {name:"A Dark Room",genre:"Idle",emoji:"a dark room ",path:"https://a456pur.github.io/seraph/games/adarkroom/index.html",useProxy:true},
+    {name:"Ascii Space",genre:"Arcade",emoji:"ascii space",path:"https://a456pur.github.io/seraph/games/asciispace/index.html",useProxy:true},
+    {name:"Asteroids",genre:"Arcade",emoji:"asteroids",path:"https://a456pur.github.io/seraph/games/asteroids/index.html",useProxy:true},
+    {name:"Astray",genre:"Maze",emoji:"astray",path:"https://a456pur.github.io/seraph/games/astray/index.html",useProxy:true},
+    {name:"Baldi's Basics",genre:"Horror",emoji:"baldis basic",path:"https://mspoi.github.io/seraph/games/baldisbasics/index.html",useProxy:true},
+    {name:"Basketball Legends",genre:"Sports",emoji:"basketball legends",path:"https://a456pur.github.io/seraph/games/basketballlegends/index.html",useProxy:true},
+    {name:"Basketball Stars",genre:"Sports",emoji:"basketball starts",path:"https://a456pur.github.io/seraph/games/basketballstars/index.html",useProxy:true},
+    {name:"Basket Random",genre:"Sports",emoji:"basket random",path:"https://a456pur.github.io/seraph/games/basketrandom/index.html",useProxy:true},
+    {name:"BitLife",genre:"Sim",emoji:"bitlife",path:"https://mspoi.github.io/seraph/games/bitlife/index.html",useProxy:true},
+    {name:"Breakout",genre:"Arcade",emoji:"breakout",path:"https://a456pur.github.io/seraph/games/breakout/index.html",useProxy:true},
+    {name:"BTD4",genre:"Strategy",emoji:"btd4",path:"https://mspoi.github.io/seraph/games/btd/btd4/index.html",useProxy:true},
+    {name:"Chess",genre:"Strategy",emoji:"chess",path:"https://a456pur.github.io/seraph/games/chess/index.html",useProxy:true},
+    {name:"Chrome Dino",genre:"Runner",emoji:"chrome dino",path:"https://mspoi.github.io/seraph/games/dinogame/index.html",useProxy:true},
+    {name:"Clicker Heroes",genre:"Idle",emoji:"clicker heros",path:"https://a456pur.github.io/seraph/games/clickerheroes/index.html",useProxy:true},
+    {name:"Cluster Rush",genre:"Runner",emoji:"cluster rush",path:"https://mspoi.github.io/seraph/games/clusterrush/index.html",useProxy:true},
+    {name:"Cookie Clicker",genre:"Idle",emoji:"cookie clicker",path:"https://mspoi.github.io/seraph/games/cookieclicker/index.html",useProxy:true},
+    {name:"Crossy Road",genre:"Arcade",emoji:"crossy road",path:"https://mspoi.github.io/seraph/games/crossy/index.html",useProxy:true},
+    {name:"Cubefield",genre:"Arcade",emoji:"cubefield",path:"https://a456pur.github.io/seraph/games/cubefield/index.html",useProxy:true},
+    {name:"Cut the Rope",genre:"Puzzle",emoji:"cut the rope",path:"https://a456pur.github.io/seraph/games/cuttherope/index.html",useProxy:true},
+    {name:"Death Run 3D",genre:"Runner",emoji:"death run 3d",path:"https://a456pur.github.io/seraph/games/deathrun3d/index.html",useProxy:true},
+    {name:"Doom",genre:"FPS",emoji:"doom",path:"https://a456pur.github.io/seraph/games/doom/index.html",useProxy:true},
+    {name:"Doodle Jump",genre:"Arcade",emoji:"doodle jump",path:"https://mspoi.github.io/seraph/games/doodlejump/index.html",useProxy:true},
+    {name:"Drift",genre:"Racing",emoji:"drift",path:"https://a456pur.github.io/seraph/games/drift/index.html",useProxy:true},
+    {name:"Drift Hunters",genre:"Racing",emoji:"drift hunters",path:"https://mspoi.github.io/seraph/games/drifthunters/index.html",useProxy:true},
+    {name:"Drive Mad",genre:"Racing",emoji:"drive mad",path:"https://a456pur.github.io/seraph/games/drivemad/index.html",useProxy:true},
+    {name:"Duck Life",genre:"RPG",emoji:"duck life",path:"https://mspoi.github.io/seraph/games/ducklife/index.html",useProxy:true},
+    {name:"Duck Life 2",genre:"RPG",emoji:"duck life 2",path:"https://mspoi.github.io/seraph/games/ducklife2/index.html",useProxy:true},
+    {name:"Duck Life 3",genre:"RPG",emoji:"duck life 3",path:"https://mspoi.github.io/seraph/games/ducklife3/index.html",useProxy:true},
+    {name:"Duck Life 4",genre:"RPG",emoji:"duck life 4",path:"https://mspoi.github.io/seraph/games/ducklife4/index.html",useProxy:true},
+    {name:"Duck Life 5",genre:"RPG",emoji:"duck life 5",path:"https://mspoi.github.io/seraph/games/ducklife5/index.html",useProxy:true},
+    {name:"Earn to Die",genre:"Racing",emoji:"earn to die",path:"https://a456pur.github.io/seraph/games/earntodie/index.html",useProxy:true},
+    {name:"Eggy Car",genre:"Arcade",emoji:"eggy car",path:"https://a456pur.github.io/seraph/games/eggycar/index.html",useProxy:true},
+    {name:"Flappy Bird",genre:"Arcade",emoji:"flappy bird",path:"https://mspoi.github.io/seraph/games/flappy/index.html",useProxy:true},
+    {name:"Flappy 2048",genre:"Arcade",emoji:"flappy 2048",path:"https://a456pur.github.io/seraph/games/flappy2048/index.html",useProxy:true},
+    {name:"Flight Simulator",genre:"Sim",emoji:"flight simulator",path:"https://a456pur.github.io/seraph/games/flightsimulator/index.html",useProxy:true},
+    {name:"Friday Night Funkin",genre:"Rhythm",emoji:"fnf",path:"https://a456pur.github.io/seraph/games/fnf/index.html",useProxy:true},
+    {name:"Fruit Ninja",genre:"Arcade",emoji:"fruit ninja",path:"https://mspoi.github.io/seraph/games/fruitninja/index.html",useProxy:true},
+    {name:"Geometry Dash",genre:"Rhythm",emoji:"geometry dash",path:"https://a456pur.github.io/seraph/games/geometrydash/index.html",useProxy:true},
+    {name:"Getaway Shootout",genre:"Action",emoji:"getaway shoot out",path:"https://a456pur.github.io/seraph/games/getawayshootout/index.html",useProxy:true},
+    {name:"Gladihoppers",genre:"Fighting",emoji:"gladihoppers",path:"https://a456pur.github.io/seraph/games/gladihoppers/index.html",useProxy:true},
+    {name:"Google Snake",genre:"Arcade",emoji:"google snake",path:"https://a456pur.github.io/seraph/games/googlesnake/index.html",useProxy:true},
+    {name:"Grindcraft",genre:"Idle",emoji:"grindcraft",path:"https://a456pur.github.io/seraph/games/grindcraft/index.html",useProxy:true},
+    {name:"HexGL",genre:"Racing",emoji:"HexGL",path:"https://a456pur.github.io/seraph/games/hexgl/index.html",useProxy:true},
+    {name:"Hextris",genre:"Puzzle",emoji:"Hextris",path:"https://a456pur.github.io/seraph/games/hextris/index.html",useProxy:true},
+    {name:"Highway Traffic",genre:"Racing",emoji:"highway traffic",path:"https://a456pur.github.io/seraph/games/highwaytraffic/index.html",useProxy:true},
+    {name:"Learn to Fly",genre:"Arcade",emoji:"learn to fly",path:"https://mspoi.github.io/seraph/games/learntofly/index.html",useProxy:true},
+    {name:"Little Alchemy",genre:"Puzzle",emoji:"little alchemy",path:"https://a456pur.github.io/seraph/games/littlealchemy/index.html",useProxy:true},
+    {name:"Monkey Mart",genre:"Sim",emoji:"monkey mart",path:"https://mspoi.github.io/seraph/games/monkeymart/index.html",useProxy:true},
+    {name:"Moto X3M",genre:"Racing",emoji:"moto x3m",path:"https://mspoi.github.io/seraph/games/motox3m/index.html",useProxy:true},
+    {name:"OvO",genre:"Platformer",emoji:"ovo",path:"https://a456pur.github.io/seraph/games/ovo/index.html",useProxy:true},
+    {name:"OvO 2",genre:"Platformer",emoji:"ovo 2",path:"https://a456pur.github.io/seraph/games/ovo2/index.html",useProxy:true},
+    {name:"Pac-Man",genre:"Arcade",emoji:"pac man",path:"https://mspoi.github.io/seraph/games/pacman/index.html",useProxy:true},
+    {name:"Paper IO",genre:"Arcade",emoji:"paper.io",path:"https://mspoi.github.io/seraph/games/paperio2/index.html",useProxy:true},
+    {name:"Retro Bowl",genre:"Sports",emoji:"retro bowl",path:"https://mspoi.github.io/seraph/games/retrobowl/index.html",useProxy:true},
+    {name:"Riddle School 2",genre:"Adventure",emoji:"riddle school 2",path:"https://mspoi.github.io/seraph/games/riddleschool/riddleschool2/index.html",useProxy:true},
+    {name:"Rooftop Snipers",genre:"Shooter",emoji:"rooftop snipers",path:"https://mspoi.github.io/seraph/games/rooftop/index.html",useProxy:true},
+    {name:"Run 3",genre:"Runner",emoji:"run 3",path:"https://mspoi.github.io/seraph/games/run3/index.html",useProxy:true},
+    {name:"Slope",genre:"Runner",emoji:"slope",path:"https://mspoi.github.io/seraph/games/slope/index.html",useProxy:true},
+    {name:"Slope 2",genre:"Runner",emoji:"slope 2",path:"https://a456pur.github.io/seraph/games/slope2/index.html",useProxy:true},
+    {name:"Snake",genre:"Arcade",emoji:"snake",path:"https://a456pur.github.io/seraph/games/snake/index.html",useProxy:true},
+    {name:"Solitaire",genre:"Card",emoji:"solitare",path:"https://mspoi.github.io/seraph/games/solitaire/index.html",useProxy:true},
+    {name:"Space Invaders",genre:"Arcade",emoji:"space invaders",path:"https://mspoi.github.io/seraph/games/spaceinvaders/index.html",useProxy:true},
+    {name:"Stack Ball",genre:"Arcade",emoji:"stick ball",path:"https://a456pur.github.io/seraph/games/stackball/index.html",useProxy:true},
+    {name:"Stickman Hook",genre:"Arcade",emoji:"stickman hook",path:"https://mspoi.github.io/seraph/games/stickmanhook/index.html",useProxy:true},
+    {name:"Subway Surfers",genre:"Runner",emoji:"subway surfers",path:"https://mspoi.github.io/seraph/games/subwaysurfers/index.html",useProxy:true},
+    {name:"Tetris",genre:"Puzzle",emoji:"tetris",path:"https://mspoi.github.io/seraph/games/tetris/index.html",useProxy:true},
+    {name:"Time Shooter",genre:"Shooter",emoji:"time shooter",path:"https://a456pur.github.io/seraph/games/timeshooter/index.html",useProxy:true},
+    {name:"Time Shooter 2",genre:"Shooter",emoji:"time shooter 2",path:"https://a456pur.github.io/seraph/games/timeshooter2/index.html",useProxy:true},
+    {name:"Time Shooter 3",genre:"Shooter",emoji:"time shooter 3",path:"https://a456pur.github.io/seraph/games/timeshooter3/index.html",useProxy:true},
+    {name:"Tiny Fishing",genre:"Casual",emoji:"tiny fishing",path:"https://mspoi.github.io/seraph/games/tinyfishing/index.html",useProxy:true},
+    {name:"Tomb of the Mask",genre:"Arcade",emoji:"tomb of the mask",path:"https://a456pur.github.io/seraph/games/tombofthemask/index.html",useProxy:true},
+    {name:"Tunnel Rush",genre:"Runner",emoji:"tunnel rush",path:"https://mspoi.github.io/seraph/games/tunnelrush/index.html",useProxy:true},
+    {name:"Vex 3",genre:"Platformer",emoji:"vex 3",path:"https://mspoi.github.io/seraph/games/vex3/index.html",useProxy:true},
+    {name:"Vex 4",genre:"Platformer",emoji:"vex 4",path:"https://mspoi.github.io/seraph/games/vex4/index.html",useProxy:true},
+    {name:"Vex 5",genre:"Platformer",emoji:"vex 5",path:"https://a456pur.github.io/seraph/games/vex5/index.html",useProxy:true},
+    {name:"Vex 6",genre:"Platformer",emoji:"vex 6",path:"https://mspoi.github.io/seraph/games/vex6/index.html",useProxy:true},
+    {name:"World's Hardest Game 2",genre:"Puzzle",emoji:"worlds hardest game 2",path:"https://a456pur.github.io/seraph/games/worldshardestgame2/index.html",useProxy:true},
+    {name:"Zombs Royale",genre:"Battle Royale",emoji:"zombs royale",path:"https://a456pur.github.io/seraph/games/zombsroyale/index.html",useProxy:true},
+  ];
+
+  let settings = JSON.parse(localStorage.getItem('willie-settings') || '{}');
+  const featured = games.slice(0, 6);
+
+  function makeCard(game) {
+    const newTab = settings.newTab;
+    const isFav = (settings.favorites || []).includes(game.name);
+    const safeName = game.name.replace(/'/g,"\\'");
+
+    if (game.useProxy) {
+      
+      return `
+      <a class="game-card" style="cursor:pointer" onclick="trackPlayed('${safeName}');proxyNav('${game.path}')">
+        <div class="game-thumb">${game.emoji}</div>
+        <div class="game-info">
+          <div class="game-name">${game.name}</div>
+          <div class="game-genre">${game.genre}</div>
+        </div>
+        <button class="game-fav-btn ${isFav ? 'starred' : ''}" onclick="toggleFav(event,'${safeName}')">★</button>
+      </a>`;
+    }
+
+    
+    const target = newTab ? '_blank' : '_self';
+    const href = newTab ? game.path : `game.html?src=${encodeURIComponent(game.path)}&name=${encodeURIComponent(game.name)}`;
+    return `
+      <a class="game-card" href="${href}" target="${target}" onclick="trackPlayed('${safeName}')">
+        <div class="game-thumb">${game.emoji}</div>
+        <div class="game-info">
+          <div class="game-name">${game.name}</div>
+          <div class="game-genre">${game.genre}</div>
+        </div>
+        <button class="game-fav-btn ${isFav ? 'starred' : ''}" onclick="toggleFav(event,'${safeName}')">★</button>
+      </a>`;
+  }
+
+  function renderGrids(list = games) {
+    const displayList = settings.sortGames ? [...list].sort((a,b) => a.name.localeCompare(b.name)) : list;
+    const displayFeatured = settings.sortGames ? [...featured].sort((a,b) => a.name.localeCompare(b.name)) : featured;
+    document.getElementById('all-games-grid').innerHTML = displayList.map(makeCard).join('');
+    document.getElementById('featured-grid').innerHTML = displayFeatured.map(makeCard).join('');
+    document.getElementById('game-count').textContent = games.length;
+    document.getElementById('stat-games').textContent = games.length;
+    renderRecentlyPlayed();
+    renderFavorites();
+  }
+
+  function filterGames(q) {
+    const filtered = games.filter(g =>
+      g.name.toLowerCase().includes(q.toLowerCase()) ||
+      g.genre.toLowerCase().includes(q.toLowerCase())
+    );
+    document.getElementById('all-games-grid').innerHTML = filtered.map(makeCard).join('');
+    if (q) showView('games');
+  }
+
+  // ── Cloud Gaming Data & Functions ──
+  const cloudGames = [
+    {name:"Fortnite",genre:"Shooter",platform:"Browser",players:"350M+",rating:"4.8",img:"https://cdn2.unrealengine.com/social-image-chapter4-s3-3840x2160-d35912cc25ad.jpg",url:"https://www.xbox.com/en-US/play/games/fortnite/BT5P2X999VH2"},
+    {name:"Rocket League",genre:"Sports",platform:"Browser",players:"90M+",rating:"4.7",img:"https://rocketleague.media.zestyio.com/rl_platform_keyart_2019.jpg",url:"https://www.xbox.com/en-US/play/games/rocket-league/C125W9BG2K0V"},
+    {name:"Minecraft",genre:"Sandbox",platform:"Browser",players:"238M+",rating:"4.9",img:"https://www.minecraft.net/content/dam/games/minecraft/key-art/Games_Subnav_702x1422-702x1422.jpg",url:"https://www.xbox.com/en-US/play/games/minecraft/CFQP3Q29W1V2"},
+    {name:"Halo Infinite",genre:"Shooter",platform:"Cloud",players:"20M+",rating:"4.5",img:"https://store-images.s-microsoft.com/image/apps.10075.13727851868390641.c9cc5f66-edf0-4135-b1ef-21f3f5ba3951.78ebb893-9a66-44e1-b66e-aab2ff498f23",url:"https://www.xbox.com/en-US/play/games/halo-infinite/9PP5G1F0C2B6"},
+    {name:"GTA V",genre:"Action",platform:"Cloud",players:"190M+",rating:"4.7",img:"https://media-rockstargames-com.akamaized.net/mfe6/prod/__batch/gtav-social-club-redesign-deadsite-img.jpg",url:"https://play.geforcenow.com"},
+    {name:"Apex Legends",genre:"Shooter",platform:"Browser",players:"100M+",rating:"4.6",img:"https://media.contentapi.ea.com/content/dam/apex-legends/common/articles/revenant-reborn-revealed/apex-legends-s18-keyart.jpg.adapt.crop191x100.628p.jpg",url:"https://www.xbox.com/en-US/play/games/apex-legends/BV9ML45J2Q5V"},
+    {name:"Among Us",genre:"Action",platform:"Browser",players:"500M+",rating:"4.5",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/945360/capsule_616x353.jpg",url:"https://www.xbox.com/en-US/play/games/among-us/9NG07QJNK38J"},
+    {name:"Fall Guys",genre:"Action",platform:"Browser",players:"80M+",rating:"4.4",img:"https://cdn2.unrealengine.com/egs-fallguys-mediatonic-s1-2560x1440-2d0363c7a3a0.jpg",url:"https://www.xbox.com/en-US/play/games/fall-guys/9PMXH5249DG5"},
+    {name:"Stardew Valley",genre:"RPG",platform:"Cloud",players:"30M+",rating:"4.9",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/413150/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Destiny 2",genre:"Shooter",platform:"Cloud",players:"40M+",rating:"4.3",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1085660/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Cyberpunk 2077",genre:"RPG",platform:"Cloud",players:"25M+",rating:"4.6",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Valorant",genre:"Shooter",platform:"Cloud",players:"28M+",rating:"4.5",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/2215160/header.jpg",url:"https://play.geforcenow.com"},
+    {name:"Elden Ring",genre:"RPG",platform:"Cloud",players:"23M+",rating:"4.8",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"CS2",genre:"Shooter",platform:"Cloud",players:"64M+",rating:"4.4",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/730/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"No Man's Sky",genre:"Adventure",platform:"Cloud",players:"10M+",rating:"4.5",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/275850/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"The Witcher 3",genre:"RPG",platform:"Cloud",players:"50M+",rating:"4.9",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/292030/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Terraria",genre:"Sandbox",platform:"Cloud",players:"44M+",rating:"4.9",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/105600/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Ark: Survival",genre:"Adventure",platform:"Cloud",players:"40M+",rating:"4.3",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/346110/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Rust",genre:"Action",platform:"Cloud",players:"14M+",rating:"4.5",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/252490/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Rainbow Six Siege",genre:"Shooter",platform:"Cloud",players:"85M+",rating:"4.3",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/359550/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Deep Rock Galactic",genre:"Shooter",platform:"Cloud",players:"8M+",rating:"4.8",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/548430/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Sea of Thieves",genre:"Adventure",platform:"Browser",players:"35M+",rating:"4.4",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1172620/capsule_616x353.jpg",url:"https://www.xbox.com/en-US/play/games/sea-of-thieves/9P2N57MC619K"},
+    {name:"Grounded",genre:"Adventure",platform:"Browser",players:"15M+",rating:"4.6",img:"https://store-images.s-microsoft.com/image/apps.60563.14456089668044215.6a08618b-5d49-4b1a-8472-42c20c820a37.9da1adf8-6285-47e3-84bb-73cb2a6a8a6e",url:"https://www.xbox.com/en-US/play/games/grounded/C2M3F1FKG1KV"},
+    {name:"Palworld",genre:"Adventure",platform:"Browser",players:"25M+",rating:"4.3",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1623730/capsule_616x353.jpg",url:"https://www.xbox.com/en-US/play/games/palworld/9N2B6N7Z5BDB"},
+    {name:"Hollow Knight",genre:"Platformer",platform:"Cloud",players:"10M+",rating:"4.9",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/367520/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Celeste",genre:"Platformer",platform:"Cloud",players:"5M+",rating:"4.8",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/504230/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Cuphead",genre:"Platformer",platform:"Cloud",players:"12M+",rating:"4.7",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/268910/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Civilization VI",genre:"Puzzle",platform:"Cloud",players:"15M+",rating:"4.5",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/289070/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Portal 2",genre:"Puzzle",platform:"Cloud",players:"20M+",rating:"4.9",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/620/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Tetris Effect",genre:"Puzzle",platform:"Cloud",players:"4M+",rating:"4.7",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1003590/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"FIFA Online",genre:"Sports",platform:"Cloud",players:"45M+",rating:"4.2",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1811260/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"NBA 2K24",genre:"Sports",platform:"Cloud",players:"12M+",rating:"4.1",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/2338770/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Trackmania",genre:"Racing",platform:"Cloud",players:"18M+",rating:"4.4",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/2225070/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Need for Speed",genre:"Racing",platform:"Cloud",players:"30M+",rating:"4.3",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1846380/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Assetto Corsa",genre:"Racing",platform:"Cloud",players:"9M+",rating:"4.6",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/244210/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Forza Horizon 5",genre:"Racing",platform:"Browser",players:"35M+",rating:"4.8",img:"https://store-images.s-microsoft.com/image/apps.52291.14595498475371101.cfa71c75-3e81-4849-9a68-e6f1d581f0df.c07fd236-014e-46d3-bb42-e3ed56d1e44b",url:"https://www.xbox.com/en-US/play/games/forza-horizon-5/9NKX70BBCDRN"},
+    {name:"Diablo IV",genre:"RPG",platform:"Browser",players:"15M+",rating:"4.2",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/2344520/capsule_616x353.jpg",url:"https://www.xbox.com/en-US/play/games/diablo-iv/9NJ07BSKT0LG"},
+    {name:"Starfield",genre:"RPG",platform:"Browser",players:"12M+",rating:"4.0",img:"https://store-images.s-microsoft.com/image/apps.58193.68253524912487614.c0e50cd0-3c97-48a3-b290-b8e73b4a5a95.14d6cba8-df15-421e-89f4-74f5174b7e00",url:"https://www.xbox.com/en-US/play/games/starfield/9NP1P1WFS0LB"},
+    {name:"Dead Cells",genre:"Platformer",platform:"Cloud",players:"10M+",rating:"4.7",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/588650/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Subnautica",genre:"Adventure",platform:"Cloud",players:"8M+",rating:"4.8",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/264710/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Satisfactory",genre:"Sandbox",platform:"Cloud",players:"6M+",rating:"4.7",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/526870/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"V Rising",genre:"Action",platform:"Cloud",players:"4M+",rating:"4.5",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1604030/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Geometry Dash",genre:"Platformer",platform:"Cloud",players:"40M+",rating:"4.6",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/322170/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Plague Inc",genre:"Puzzle",platform:"Cloud",players:"160M+",rating:"4.5",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/246620/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Baldur's Gate 3",genre:"RPG",platform:"Cloud",players:"15M+",rating:"4.9",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Lethal Company",genre:"Action",platform:"Cloud",players:"14M+",rating:"4.7",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1966720/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Monster Hunter",genre:"Action",platform:"Cloud",players:"20M+",rating:"4.6",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/582010/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"Phasmophobia",genre:"Adventure",platform:"Cloud",players:"11M+",rating:"4.6",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/739630/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+    {name:"PowerWash Sim",genre:"Puzzle",platform:"Browser",players:"8M+",rating:"4.7",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1290000/capsule_616x353.jpg",url:"https://www.xbox.com/en-US/play/games/powerwash-simulator/9P1413TH06WR"},
+    {name:"Cities: Skylines",genre:"Sandbox",platform:"Cloud",players:"12M+",rating:"4.6",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/255710/capsule_616x353.jpg",url:"https://play.geforcenow.com"},
+  ];
+
+  let cgCategoryFilter = 'all';
+
+  function makeCGCard(g) {
+    const live = Math.random() > 0.7;
+    return `<a class="cg-card" onclick="proxyNav('${g.url}')">
+      <div class="cg-card-thumb">
+        <img src="${g.img}" alt="${g.name}" onerror="this.style.display='none';this.parentNode.textContent='${g.name.charAt(0)}';">
+        <span class="cg-card-platform">${g.platform}</span>
+        ${live ? '<span class="cg-card-live">LIVE</span>' : ''}
+      </div>
+      <div class="cg-card-info">
+        <div class="cg-card-name">${g.name}</div>
+        <div class="cg-card-genre">${g.genre}</div>
+        <div class="cg-card-meta">
+          <span class="cg-card-players">${g.players}</span>
+          <span class="cg-card-rating">\u2605 ${g.rating}</span>
+        </div>
+      </div>
+    </a>`;
+  }
+
+  function renderCGGrid(list) {
+    document.getElementById('cg-grid').innerHTML = list.map(makeCGCard).join('');
+  }
+
+  function filterCGCategory(cat, el) {
+    cgCategoryFilter = cat;
+    document.querySelectorAll('.cg-tab').forEach(t => t.classList.remove('active'));
+    if (el) el.classList.add('active');
+    const searchVal = document.getElementById('cg-search')?.value || '';
+    applyCloudGamesFilter(searchVal, cat);
+  }
+
+  function filterCloudGames(q) {
+    applyCloudGamesFilter(q, cgCategoryFilter);
+  }
+
+  function applyCloudGamesFilter(q, cat) {
+    let filtered = cloudGames;
+    if (cat && cat !== 'all') {
+      filtered = filtered.filter(g => g.genre.toLowerCase() === cat.toLowerCase());
+    }
+    if (q) {
+      const ql = q.toLowerCase();
+      filtered = filtered.filter(g =>
+        g.name.toLowerCase().includes(ql) ||
+        g.genre.toLowerCase().includes(ql) ||
+        g.platform.toLowerCase().includes(ql)
+      );
+    }
+    renderCGGrid(filtered);
+  }
+
+  // ── Movies ──
+  // Pre-seeded tiles. To add your own embed, edit DEFAULT_MOVIES below —
+  // replace REPLACE_WITH_YOUR_EMBED_URL with the iframe src you want this tile to open.
+  const DEFAULT_MOVIES = [
+    { name: "Spiderman: Brand New Day", img: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQR0RtSBPqjiQScSPYV5YnWdDTUNGWWrjaUIwnEs2WuioLTCJBM", embed: "https://drive.google.com/file/d/1Ug2O0m63GuRhw6VMOZhzFt-22LKzgpn0/preview" }
+  ];
+  function loadMovies() {
+    try {
+      const stored = localStorage.getItem('willie-movies');
+      if (stored) return JSON.parse(stored);
+      saveMovies(DEFAULT_MOVIES);
+      return DEFAULT_MOVIES;
+    } catch { return DEFAULT_MOVIES; }
+  }
+  function saveMovies(list) {
+    localStorage.setItem('willie-movies', JSON.stringify(list));
+  }
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function renderMovies() {
+    const grid = document.getElementById('movie-grid');
+    if (!grid) return;
+    const movies = loadMovies();
+    grid.innerHTML = movies.map((m, i) => `
+      <div class="movie-tile" style="background-image:url('${escHtml(m.img)}')" onclick="openMovieWatch(${i})">
+        <div class="movie-tile-label">${escHtml(m.name)}</div>
+      </div>
+    `).join('');
+  }
+
+  function openMovieWatch(i) {
+    const movies = loadMovies();
+    const m = movies[i];
+    if (!m) return;
+    document.getElementById('movie-watch-title').textContent = m.name;
+    document.getElementById('movie-watch-frame').innerHTML =
+      `<iframe src="${escHtml(m.embed)}" width="640" height="480"></iframe>`;
+    document.getElementById('movie-watch-overlay').classList.add('open');
+  }
+  function closeMovieWatch() {
+    document.getElementById('movie-watch-overlay').classList.remove('open');
+    document.getElementById('movie-watch-frame').innerHTML = '';
+  }
+
+  renderMovies();
+  window.openMovieWatch = openMovieWatch;
+  window.closeMovieWatch = closeMovieWatch;
+
+  
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('view-' + id).classList.add('active');
+    const titles = { home: 'Home', games: 'Games', apps: 'Tools', cloudgaming: 'Movies', proxy: 'Proxy', history: 'History', bookmarks: 'Bookmarks', settings: 'Settings' };
+    document.getElementById('page-title').textContent = titles[id] || id;
+    event?.currentTarget?.classList.add('active');
+  }
+
+  async function appNav(url) {
+    showView('proxy');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    await quickNav(url);
+  }
+
+  function toolNav(url) {
+    showView('proxy');
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'proxy'")) n.classList.add('active');
+      else n.classList.remove('active');
+    });
+    _doNavigate(url);
+  }
+
+  
+  const { ScramjetController } = $scramjetLoadController();
+  const scramjet = new ScramjetController({
+    files: {
+      wasm: '/scram/scramjet.wasm.wasm',
+      all: '/scram/scramjet.all.js',
+      sync: '/scram/scramjet.sync.js',
+    },
+  });
+  scramjet.init();
+
+  const connection = new BareMux.BareMuxConnection('/baremux/worker.js');
+
+  
+  const ENGINES = {
+    google:     { label: 'Google',     logo: 'https://www.google.com/favicon.ico',                                          url: 'https://www.google.com/search?q=%s' },
+    brave:      { label: 'Brave',      logo: 'https://brave.com/static-assets/images/brave-favicon.png',                   url: 'https://search.brave.com/search?q=%s' },
+    duckduckgo: { label: 'DuckDuckGo', logo: 'https://duckduckgo.com/favicon.ico',                                         url: 'https://duckduckgo.com/?q=%s' },
+    bing:       { label: 'Bing',       logo: 'https://www.bing.com/favicon.ico',                                           url: 'https://www.bing.com/search?q=%s' },
+    yahoo:      { label: 'Yahoo',      logo: 'https://s.yimg.com/rz/l/favicon.ico',                                        url: 'https://search.yahoo.com/search?p=%s' },
+    ecosia:     { label: 'Ecosia',     logo: 'https://www.ecosia.org/favicon.ico',                                         url: 'https://www.ecosia.org/search?q=%s' },
+  };
+  let currentEngineKey = localStorage.getItem('willie-engine') || 'google';
+  function getEngineUrl() { return (ENGINES[currentEngineKey] || ENGINES.google).url; }
+
+  function setEngine(key, el) {
+    currentEngineKey = key;
+    localStorage.setItem('willie-engine', key);
+    const eng = ENGINES[key] || ENGINES.google;
+    document.querySelectorAll('.engine-label-span').forEach(s => s.textContent = eng.label);
+    document.querySelectorAll('.engine-btn-logo').forEach(img => { img.src = eng.logo; img.alt = eng.label; });
+    document.querySelectorAll('.engine-option').forEach(o => o.classList.remove('selected'));
+    document.querySelectorAll('.engine-option').forEach(o => {
+      if (o.dataset.engine === key) o.classList.add('selected');
+    });
+    document.querySelectorAll('.tab-newtab-engine-label').forEach(s => s.textContent = eng.label);
+    document.querySelectorAll('.tab-newtab-engine-logo').forEach(img => { img.src = eng.logo; img.alt = eng.label; });
+    closeEngineDropdowns();
+  }
+
+  function toggleLandingEngine(e) {
+    e.stopPropagation();
+    document.getElementById('engine-dropdown').classList.remove('open');
+    document.getElementById('landing-engine-dropdown').classList.toggle('open');
+  }
+
+  function toggleBarEngine(e) {
+    e.stopPropagation();
+    document.getElementById('landing-engine-dropdown').classList.remove('open');
+    document.getElementById('engine-dropdown').classList.toggle('open');
+  }
+
+  function closeEngineDropdowns() {
+    document.querySelectorAll('#landing-engine-dropdown, #engine-dropdown, .tab-newtab-engine-dropdown').forEach(d => d.classList.remove('open'));
+  }
+
+  document.addEventListener('click', closeEngineDropdowns);
+
+  
+  (function() {
+    const eng = ENGINES[currentEngineKey] || ENGINES.google;
+    document.querySelectorAll('.engine-label-span').forEach(s => s.textContent = eng.label);
+    document.querySelectorAll('.engine-btn-logo').forEach(img => { img.src = eng.logo; img.alt = eng.label; });
+    document.querySelectorAll('.engine-option').forEach(o => {
+      o.classList.toggle('selected', o.dataset.engine === currentEngineKey);
+    });
+  })();
+
+  
+  async function _ensureSW() {
+    try {
+      await registerSW();
+      if (!navigator.serviceWorker.controller) {
+        await new Promise(resolve => {
+          navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
+          setTimeout(resolve, 3000);
+        });
+      }
+    } catch(e) { console.error('SW registration failed', e); }
+    const wispUrl = (location.protocol === 'https:' ? 'wss' : 'ws') + '://' + location.host + '/wisp/';
+    if ((await connection.getTransport()) !== '/libcurl/index.mjs') {
+      await connection.setTransport('/libcurl/index.mjs', [{ websocket: wispUrl }]);
+    }
+  }
+
+ 
+  let tabs = [];
+  let activeTabId = null;
+  let tabCounter = 0;
+
+  function getActiveTab() { return tabs.find(t => t.id === activeTabId) || null; }
+
+  function shortenTitle(url) {
+    try { return new URL(url).hostname.replace('www.',''); } catch { return url.slice(0,20); }
+  }
+
+  
+  function makeNewTabPage(tabId) {
+    const eng = ENGINES[currentEngineKey] || ENGINES.google;
+    const div = document.createElement('div');
+    div.className = 'tab-newtab-page';
+    div.dataset.ntTabId = tabId;
+    div.innerHTML = `
+      <div class="tab-newtab-title">Willie Browser</div>
+      <div class="tab-newtab-sub">search a link or open a site</div>
+      <div style="position:relative;width:100%;max-width:600px;">
+        <div class="tab-newtab-bar">
+          <span class="tab-newtab-bar-icon" style="padding:0 16px;display:flex;align-items:center;color:#555;font-size:18px;flex-shrink:0;">⌯⌲</span>
+          <input class="tab-newtab-input" placeholder="Search or enter URL" data-nt-input="${tabId}" />
+          <button class="tab-newtab-engine-btn" onclick="toggleNTEngine(event,'${tabId}')"><img class="tab-newtab-engine-logo engine-btn-logo" src="${eng.logo}" alt="${eng.label}" style="width:16px;height:16px;object-fit:contain;border-radius:3px;flex-shrink:0;"/> <span class="tab-newtab-engine-label engine-label-span">${eng.label}</span></button>
+          <button class="tab-newtab-go" data-nt-go="${tabId}">→</button>
+        </div>
+          <div class="tab-newtab-engine-dropdown engine-dropdown-inner" id="nt-engine-${tabId}" style="position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#0e0e14;border:1px solid var(--border-bright);border-radius:10px;padding:6px;display:none;flex-direction:column;gap:2px;z-index:9999;min-width:170px;box-shadow:0 8px 32px rgba(0,0,0,.5);">
+          <div class="engine-option${currentEngineKey==='google'?' selected':''}" data-engine="google" onclick="setEngine('google',this)"><span class="engine-option-icon"><img src="https://www.google.com/favicon.ico" alt="Google"/></span>Google</div>
+          <div class="engine-option${currentEngineKey==='brave'?' selected':''}" data-engine="brave" onclick="setEngine('brave',this)"><span class="engine-option-icon"><img src="https://brave.com/static-assets/images/brave-favicon.png" alt="Brave"/></span>Brave</div>
+          <div class="engine-option${currentEngineKey==='duckduckgo'?' selected':''}" data-engine="duckduckgo" onclick="setEngine('duckduckgo',this)"><span class="engine-option-icon"><img src="https://duckduckgo.com/favicon.ico" alt="DuckDuckGo"/></span>DuckDuckGo</div>
+          <div class="engine-option${currentEngineKey==='bing'?' selected':''}" data-engine="bing" onclick="setEngine('bing',this)"><span class="engine-option-icon"><img src="https://www.bing.com/favicon.ico" alt="Bing"/></span>Bing</div>
+          <div class="engine-option${currentEngineKey==='yahoo'?' selected':''}" data-engine="yahoo" onclick="setEngine('yahoo',this)"><span class="engine-option-icon"><img src="https://s.yimg.com/rz/l/favicon.ico" alt="Yahoo"/></span>Yahoo</div>
+          <div class="engine-option${currentEngineKey==='ecosia'?' selected':''}" data-engine="ecosia" onclick="setEngine('ecosia',this)"><span class="engine-option-icon"><img src="https://www.ecosia.org/favicon.ico" alt="Ecosia"/></span>Ecosia</div>
+        </div>
+      </div>
+      <div class="tab-newtab-quicklinks">
+        <a class="proxy-quicklink" style="cursor:pointer" data-nt-quick="https://youtube.com">
+          <div class="proxy-quicklink-icon"><img src="https://static.vecteezy.com/system/resources/thumbnails/042/127/234/small/white-square-bordered-youtube-logo-on-transparent-background-free-png.png"/></div>
+          <span class="proxy-quicklink-label">YouTube</span>
+        </a>
+        <a class="proxy-quicklink" style="cursor:pointer" data-nt-quick="https://tiktok.com">
+          <div class="proxy-quicklink-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSskn3UG5PHzksP0bC2GNp245KFrsP6mhxweg&s"/></div>
+          <span class="proxy-quicklink-label">TikTok</span>
+        </a>
+        <a class="proxy-quicklink" style="cursor:pointer" data-nt-quick="https://discord.com">
+          <div class="proxy-quicklink-icon"><img src="https://pngimg.com/uploads/discord/discord_PNG8.png"/></div>
+          <span class="proxy-quicklink-label">Discord</span>
+        </a>
+        <a class="proxy-quicklink" style="cursor:pointer" data-nt-quick="https://chat.openai.com">
+          <div class="proxy-quicklink-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRt_I0AqTbvaxxFCoEWH_SZP49jpBiTMiCkCA&s"/></div>
+          <span class="proxy-quicklink-label">ChatGPT</span>
+        </a>
+        <a class="proxy-quicklink" style="cursor:pointer" data-nt-quick="https://twitch.tv">
+          <div class="proxy-quicklink-icon"><img src="https://cdn.m7g.twitch.tv/ba46b4e5e395b11efd34/assets/uploads/03-glitch.jpg"/></div>
+          <span class="proxy-quicklink-label">Twitch</span>
+        </a>
+      </div>
+    `;
+   
+    div.querySelector(`[data-nt-go="${tabId}"]`).addEventListener('click', () => {
+      const val = div.querySelector(`[data-nt-input="${tabId}"]`).value.trim();
+      if (val) _doNavigateInTab(tabId, search(val, getEngineUrl()));
+    });
+    div.querySelector(`[data-nt-input="${tabId}"]`).addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const val = e.target.value.trim();
+        if (val) _doNavigateInTab(tabId, search(val, getEngineUrl()));
+      }
+    });
+    div.querySelectorAll('[data-nt-quick]').forEach(a => {
+      a.addEventListener('click', () => _doNavigateInTab(tabId, a.dataset.ntQuick));
+    });
+    return div;
+  }
+
+  function toggleNTEngine(e, tabId) {
+    e.stopPropagation();
+    const dd = document.getElementById('nt-engine-' + tabId);
+    const wasOpen = dd.style.display === 'flex';
+    closeEngineDropdowns();
+    if (!wasOpen) dd.style.display = 'flex';
+  }
+
+  
+  const _origCloseEng = closeEngineDropdowns;
+  closeEngineDropdowns = function() {
+    document.querySelectorAll('#landing-engine-dropdown, #engine-dropdown').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.engine-dropdown-inner').forEach(d => d.style.display = 'none');
+  };
+
+  
+  function renderTabs() {
+    const bar = document.getElementById('proxy-tabbar');
+    const newBtn = document.getElementById('proxy-tab-new');
+    bar.querySelectorAll('.proxy-tab').forEach(t => t.remove());
+    tabs.forEach(tab => {
+      const el = document.createElement('div');
+      el.className = 'proxy-tab' + (tab.id === activeTabId ? ' active' : '');
+      el.dataset.tabId = tab.id;
+      el.innerHTML = `<span class="proxy-tab-title">${tab.title || 'New Tab'}</span><button class="proxy-tab-close" title="Close tab">✕</button>`;
+      el.querySelector('.proxy-tab-title').addEventListener('click', () => switchTab(tab.id));
+      el.querySelector('.proxy-tab-close').addEventListener('click', e => { e.stopPropagation(); closeTab(tab.id); });
+      bar.insertBefore(el, newBtn);
+    });
+  }
+
+  function showTabContent(tab) {
+    
+    const container = document.getElementById('proxy-frame-container');
+    container.querySelectorAll('.tab-newtab-page').forEach(p => p.style.display = 'none');
+    container.querySelectorAll('iframe').forEach(f => f.style.display = 'none');
+    
+    if (tab.url && tab.sjFrame) {
+      tab.sjFrame.frame.style.display = '';
+    } else {
+      tab.ntPage.style.display = 'flex';
+    }
+    document.getElementById('proxy-url-bar').value = tab.url || '';
+    updateBookmarkBtn(tab.url || '');
+  }
+
+  function switchTab(id) {
+    activeTabId = id;
+    const tab = getActiveTab();
+    if (tab) showTabContent(tab);
+    renderTabs();
+  }
+
+  function closeTab(id) {
+    const idx = tabs.findIndex(t => t.id === id);
+    if (idx < 0) return;
+    const tab = tabs[idx];
+    if (tab.sjFrame) tab.sjFrame.frame.remove();
+    if (tab.ntPage) tab.ntPage.remove();
+    tabs.splice(idx, 1);
+    if (tabs.length === 0) {
+      activeTabId = null;
+      
+      document.getElementById('proxy-landing').classList.remove('hidden');
+      document.getElementById('proxy-browser').classList.remove('visible');
+      return;
+    }
+    if (activeTabId === id) {
+      switchTab(tabs[Math.min(idx, tabs.length - 1)].id);
+    } else {
+      renderTabs();
+    }
+  }
+
+  async function proxyNewTab(url) {
+    const id = ++tabCounter;
+    const container = document.getElementById('proxy-frame-container');
+    container.style.position = 'relative';
+
+    
+    const ntPage = makeNewTabPage(id);
+    container.appendChild(ntPage);
+
+    const tab = { id, sjFrame: null, ntPage, url: '', title: 'New Tab' };
+    tabs.push(tab);
+    activeTabId = id;
+
+    
+    document.getElementById('proxy-landing').classList.add('hidden');
+    document.getElementById('proxy-browser').classList.add('visible');
+
+    showTabContent(tab);
+    renderTabs();
+
+    
+    if (url) await _doNavigateInTab(id, url);
+  }
+
+  
+  async function _doNavigateInTab(tabId, url) {
+    await _ensureSW();
+    const tab = tabs.find(t => t.id === tabId);
+    if (!tab) return;
+    if (!tab.sjFrame) {
+      const container = document.getElementById('proxy-frame-container');
+      const sjFrame = scramjet.createFrame();
+      sjFrame.frame.style.cssText = 'width:100%;height:100%;border:none;position:absolute;inset:0;display:none;';
+      container.appendChild(sjFrame.frame);
+      tab.sjFrame = sjFrame;
+    }
+    tab.url = url;
+    tab.title = shortenTitle(url);
+    tab.sjFrame.go(url);
+    addHistory(url);
+    if (tab.id === activeTabId) {
+      showTabContent(tab);
+      document.getElementById('proxy-url-bar').value = url;
+      updateBookmarkBtn(url);
+    }
+    renderTabs();
+  }
+
+  async function _doNavigate(url) {
+    if (!getActiveTab()) {
+      await proxyNewTab(url);
+      return;
+    }
+    await _doNavigateInTab(activeTabId, url);
+    document.getElementById('proxy-landing').classList.add('hidden');
+    document.getElementById('proxy-browser').classList.add('visible');
+  }
+
+  async function loadProxy() {
+    let val = document.getElementById('proxy-url').value.trim();
+    if (!val) return;
+    const url = search(val, getEngineUrl());
+    await _doNavigate(url);
+  }
+
+  async function quickNav(url) {
+    document.getElementById('proxy-url').value = url;
+    await _doNavigate(url);
+  }
+
+  async function proxyNav(url) {
+    showView('proxy');
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'proxy'")) n.classList.add('active');
+      else n.classList.remove('active');
+    });
+    await _doNavigate(url);
+  }
+
+  function proxyBack() {
+    const tab = getActiveTab();
+    if (tab && tab.sjFrame) tab.sjFrame.frame.contentWindow.history.back();
+  }
+
+  function proxyForward() {
+    const tab = getActiveTab();
+    if (tab && tab.sjFrame) tab.sjFrame.frame.contentWindow.history.forward();
+  }
+
+  function proxyRefresh() {
+    const tab = getActiveTab();
+    if (tab && tab.sjFrame) tab.sjFrame.frame.contentWindow.location.reload();
+  }
+
+  function proxyFullscreen() {
+    const container = document.getElementById('proxy-frame-container');
+    const btn = document.getElementById('proxy-fs-btn');
+    if (!document.fullscreenElement) {
+      container.requestFullscreen().then(() => {
+        btn.textContent = '⊠';
+        btn.title = 'Exit Fullscreen';
+      }).catch(() => {});
+    } else {
+      document.exitFullscreen().then(() => {
+        btn.textContent = '⛶';
+        btn.title = 'Fullscreen';
+      }).catch(() => {});
+    }
+  }
+
+  document.addEventListener('fullscreenchange', () => {
+    const btn = document.getElementById('proxy-fs-btn');
+    if (btn) {
+      btn.textContent = document.fullscreenElement ? '⊠' : '⛶';
+      btn.title = document.fullscreenElement ? 'Exit Fullscreen' : 'Fullscreen';
+    }
+  });
+
+  function proxyHome() {
+    
+    tabs.forEach(t => {
+      if (t.sjFrame) t.sjFrame.frame.style.display = 'none';
+      if (t.ntPage) t.ntPage.style.display = 'none';
+    });
+    document.getElementById('proxy-landing').classList.remove('hidden');
+    document.getElementById('proxy-browser').classList.remove('visible');
+    document.getElementById('proxy-url').value = '';
+  }
+
+  document.getElementById('proxy-url').addEventListener('keydown', e => {
+    if (e.key === 'Enter') loadProxy();
+  });
+
+  document.getElementById('proxy-url-bar').addEventListener('keydown', async e => {
+    if (e.key === 'Enter') {
+      const url = search(e.target.value.trim(), getEngineUrl());
+      await _doNavigate(url);
+    }
+  });
+
+  
+  function initParticles() {
+    const canvas = document.getElementById('global-particles');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, stars;
+
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function makeStar() {
+      return {
+        x: Math.random() * W - W / 2,
+        y: Math.random() * H - H / 2,
+        z: Math.random() * W,
+        pz: 0,
+      };
+    }
+
+    function init() {
+      resize();
+      stars = Array.from({ length: 800 }, makeStar);
+    }
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.fillRect(0, 0, W, H);
+
+      if (particlesEnabled) {
+        const cx = W / 2;
+        const cy = H / 2;
+        const speed = 6;
+
+        for (const s of stars) {
+          s.pz = s.z;
+          s.z -= speed;
+
+          if (s.z <= 0) {
+            s.x = Math.random() * W - cx;
+            s.y = Math.random() * H - cy;
+            s.z = W;
+            s.pz = s.z;
+          }
+
+          const sx = (s.x / s.z) * W + cx;
+          const sy = (s.y / s.z) * H + cy;
+          const px = (s.x / s.pz) * W + cx;
+          const py = (s.y / s.pz) * H + cy;
+
+          const size = Math.max(0.1, (1 - s.z / W) * 3);
+          const brightness = Math.floor((1 - s.z / W) * 255);
+          const alpha = (1 - s.z / W);
+
+          ctx.strokeStyle = `rgba(${brightness},${brightness},${brightness+20},${alpha})`;
+          ctx.lineWidth = size;
+          ctx.beginPath();
+          ctx.moveTo(px, py);
+          ctx.lineTo(sx, sy);
+          ctx.stroke();
+        }
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', resize);
+    init();
+    draw();
+
+    const proxyCanvas = document.getElementById('proxy-particles');
+    if (proxyCanvas) proxyCanvas.style.display = 'none';
+  }
+
+  
+  let particlesInited = false;
+  const origShowView = showView;
+  
+
+  
+  function openSettings() { showView('settings'); }
+  function closeSettings() {}
+  function closeSettingsOutside() {}
+
+  function saveSettings() {
+    localStorage.setItem('willie-settings', JSON.stringify(settings));
+    renderGrids();
+  }
+
+  function changeTheme(val) {
+    const themes = {
+      silver: { '--silver': '#b0bec5', '--silver-bright': '#e0e8ef', '--accent': '#78909c' },
+      blue:   { '--silver': '#64b5f6', '--silver-bright': '#90caf9', '--accent': '#42a5f5' },
+      green:  { '--silver': '#69f0ae', '--silver-bright': '#b9f6ca', '--accent': '#00e676' },
+      orange: { '--silver': '#ffa040', '--silver-bright': '#ffcc80', '--accent': '#ff8c00' },
+      purple: { '--silver': '#ce93d8', '--silver-bright': '#f3e5f5', '--accent': '#ab47bc' },
+      red:    { '--silver': '#ef9a9a', '--silver-bright': '#ffcdd2', '--accent': '#e53935' },
+      pink:   { '--silver': '#f48fb1', '--silver-bright': '#fce4ec', '--accent': '#e91e63' },
+      teal:   { '--silver': '#4db6ac', '--silver-bright': '#b2dfdb', '--accent': '#00897b' },
+      gold:   { '--silver': '#ffd54f', '--silver-bright': '#fff9c4', '--accent': '#ffb300' },
+    };
+    const t = themes[val] || themes.silver;
+    Object.entries(t).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
+    settings.theme = val;
+    saveSettings();
+  }
+
+  function toggleCompact(el) {
+    document.querySelectorAll('.games-grid').forEach(g => {
+      g.style.gridTemplateColumns = el.checked
+        ? 'repeat(auto-fill, minmax(130px, 1fr))'
+        : 'repeat(auto-fill, minmax(180px, 1fr))';
+    });
+    saveSettings();
+  }
+
+  function applyTabCloak() {
+    const val = document.getElementById('cloak-preset').value;
+    const cloaks = {
+      none:      { title: 'Willie Games', icon: '' },
+      google:    { title: 'Google', icon: 'https://www.google.com/favicon.ico' },
+      classroom: { title: 'Google Classroom', icon: 'https://ssl.gstatic.com/classroom/favicon.png' },
+      docs:      { title: 'Google Docs', icon: 'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico' },
+    };
+    const c = cloaks[val] || cloaks.none;
+    document.title = c.title;
+    if (c.icon) {
+      let link = document.querySelector("link[rel~='icon']");
+      if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+      link.href = c.icon;
+    }
+    settings.cloak = val;
+    saveSettings();
+  }
+
+  function cloakTab(val) {
+    if (document.getElementById('cloak-preset')) document.getElementById('cloak-preset').value = val;
+    applyTabCloak();
+  }
+
+  function resetCloak() {
+    document.title = 'Willie Games';
+    let link = document.querySelector("link[rel~='icon']");
+    if (link) link.href = '';
+    settings.cloak = 'none';
+    if (document.getElementById('cloak-preset')) document.getElementById('cloak-preset').value = 'none';
+    saveSettings();
+  }
+
+  function applyCustomCloak() {
+    const title = document.getElementById('custom-cloak-title').value.trim();
+    const icon = document.getElementById('custom-cloak-icon').value.trim();
+    if (title) document.title = title;
+    if (icon) {
+      let link = document.querySelector("link[rel~='icon']");
+      if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+      link.href = icon;
+    }
+    settings.customCloak = { title, icon };
+    saveSettings();
+  }
+
+  let particlesEnabled = true;
+  let particlesAnimId = null;
+
+  function setParticles(enabled) {
+    particlesEnabled = enabled;
+    settings.particles = enabled;
+    saveSettings();
+    const canvas = document.getElementById('global-particles');
+    if (canvas) canvas.style.opacity = enabled ? '1' : '0';
+    document.getElementById('particles-enable-btn').classList.toggle('active', enabled);
+    document.getElementById('particles-disable-btn').classList.toggle('active', !enabled);
+  }
+
+  function setMobile(enabled) {
+    settings.mobile = enabled;
+    saveSettings();
+    const vp = document.querySelector('meta[name=viewport]');
+    if (enabled) {
+      vp.content = 'width=480, initial-scale=1.0';
+    } else {
+      vp.content = 'width=device-width, initial-scale=1.0';
+    }
+    document.getElementById('mobile-enable-btn').classList.toggle('active', enabled);
+    document.getElementById('mobile-disable-btn').classList.toggle('active', !enabled);
+  }
+
+  function setSortGames(enabled) {
+    settings.sortGames = enabled;
+    saveSettings();
+    renderGrids();
+    document.getElementById('sort-enable-btn').classList.toggle('active', enabled);
+    document.getElementById('sort-disable-btn').classList.toggle('active', !enabled);
+  }
+
+  function setDeledao(enabled) {
+    settings.deledao = enabled;
+    saveSettings();
+    document.getElementById('deledao-overlay').style.display = enabled ? 'block' : 'none';
+    document.getElementById('deledao-enable-btn').classList.toggle('active', enabled);
+    document.getElementById('deledao-disable-btn').classList.toggle('active', !enabled);
+  }
+
+  function aboutBlankCloak() {
+    if (window.self !== window.top) return;
+    const w = window.open('about:blank', '_blank');
+    const doc = w.document;
+    doc.open();
+    doc.write(`<!DOCTYPE html><html><head><title>New Tab</title></head><body style="margin:0;padding:0;overflow:hidden;">
+      <iframe src="${location.href}" style="width:100vw;height:100vh;border:none;"></iframe>
+    </body></html>`);
+    doc.close();
+  }
+
+  
+  function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const btn = document.getElementById('sidebar-toggle');
+    sb.classList.toggle('collapsed');
+    btn.classList.toggle('collapsed');
+    btn.textContent = sb.classList.contains('collapsed') ? '›' : '‹';
+  }
+
+  
+  function getHistory() { return JSON.parse(localStorage.getItem('willie-history') || '[]'); }
+  function saveHistory(h) { localStorage.setItem('willie-history', JSON.stringify(h)); }
+
+  function addHistory(url) {
+    if (settings.incognito) return;
+    const h = getHistory().filter(x => x.url !== url);
+    h.unshift({ url, time: Date.now() });
+    saveHistory(h.slice(0, 100));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const list = document.getElementById('history-list');
+    if (!list) return;
+    const h = getHistory();
+    if (!h.length) { list.innerHTML = '<div class="hb-empty">No history yet</div>'; return; }
+    list.innerHTML = h.map((item, i) => `
+      <div class="hb-item" onclick="quickNavFromHB('${item.url.replace(/'/g,"\\'")}')">
+        <span class="hb-icon">🌐</span>
+        <div class="hb-info">
+          <div class="hb-title">${item.url}</div>
+          <div class="hb-url">${new Date(item.time).toLocaleString()}</div>
+        </div>
+        <button class="hb-del" onclick="deleteHistory(event,${i})">✕</button>
+      </div>`).join('');
+  }
+
+  function deleteHistory(e, i) {
+    e.stopPropagation();
+    const h = getHistory();
+    h.splice(i, 1);
+    saveHistory(h);
+    renderHistory();
+  }
+
+  function clearHistory() {
+    saveHistory([]);
+    renderHistory();
+  }
+
+  
+  function getBookmarks() { return JSON.parse(localStorage.getItem('willie-bookmarks') || '[]'); }
+  function saveBookmarks(b) { localStorage.setItem('willie-bookmarks', JSON.stringify(b)); }
+
+  function toggleBookmark() {
+    const url = document.getElementById('proxy-url-bar').value;
+    if (!url) return;
+    const b = getBookmarks();
+    const idx = b.findIndex(x => x.url === url);
+    const btn = document.getElementById('proxy-bookmark-btn');
+    if (idx >= 0) {
+      b.splice(idx, 1);
+      btn.textContent = '☆';
+      btn.classList.remove('bookmarked');
+    } else {
+      b.unshift({ url, time: Date.now() });
+      btn.textContent = '★';
+      btn.classList.add('bookmarked');
+    }
+    saveBookmarks(b);
+    renderBookmarks();
+  }
+
+  function renderBookmarks() {
+    const list = document.getElementById('bookmarks-list');
+    if (!list) return;
+    const b = getBookmarks();
+    if (!b.length) { list.innerHTML = '<div class="hb-empty">No bookmarks yet — click ☆ while browsing</div>'; return; }
+    list.innerHTML = b.map((item, i) => `
+      <div class="hb-item" onclick="quickNavFromHB('${item.url.replace(/'/g,"\\'")}')">
+        <span class="hb-icon">★</span>
+        <div class="hb-info">
+          <div class="hb-title">${item.url}</div>
+          <div class="hb-url">${new Date(item.time).toLocaleString()}</div>
+        </div>
+        <button class="hb-del" onclick="deleteBookmark(event,${i})">✕</button>
+      </div>`).join('');
+  }
+
+  function deleteBookmark(e, i) {
+    e.stopPropagation();
+    const b = getBookmarks();
+    b.splice(i, 1);
+    saveBookmarks(b);
+    renderBookmarks();
+  }
+
+  function clearBookmarks() { saveBookmarks([]); renderBookmarks(); }
+
+  function quickNavFromHB(url) {
+    showView('proxy');
+    quickNav(url);
+  }
+
+  function updateBookmarkBtn(url) {
+    const b = getBookmarks();
+    const btn = document.getElementById('proxy-bookmark-btn');
+    if (!btn) return;
+    const isBookmarked = b.some(x => x.url === url);
+    btn.textContent = isBookmarked ? '★' : '☆';
+    btn.classList.toggle('bookmarked', isBookmarked);
+  }
+
+  
+  function toggleFav(e, name) {
+    e.preventDefault(); e.stopPropagation();
+    const favs = settings.favorites || [];
+    const idx = favs.indexOf(name);
+    if (idx >= 0) favs.splice(idx, 1);
+    else favs.push(name);
+    settings.favorites = favs;
+    saveSettings();
+    renderGrids();
+  }
+
+  function renderFavorites() {
+    const favs = settings.favorites || [];
+    const section = document.getElementById('favorites-section');
+    const grid = document.getElementById('favorites-grid');
+    if (!section || !grid) return;
+    if (!favs.length) { section.style.display = 'none'; return; }
+    const favGames = games.filter(g => favs.includes(g.name));
+    section.style.display = '';
+    grid.innerHTML = favGames.map(makeCard).join('');
+  }
+
+  
+  function trackPlayed(name) {
+    if (settings.incognito) return;
+    const recent = JSON.parse(localStorage.getItem('willie-recent') || '[]').filter(x => x !== name);
+    recent.unshift(name);
+    localStorage.setItem('willie-recent', JSON.stringify(recent.slice(0, 5)));
+    renderRecentlyPlayed();
+  }
+
+  function renderRecentlyPlayed() {
+    const section = document.getElementById('recently-played-section');
+    const grid = document.getElementById('recently-played-grid');
+    if (!section || !grid) return;
+    const recent = JSON.parse(localStorage.getItem('willie-recent') || '[]');
+    if (!recent.length) { section.style.display = 'none'; return; }
+    const recentGames = recent.map(name => games.find(g => g.name === name)).filter(Boolean);
+    section.style.display = '';
+    grid.innerHTML = recentGames.map(makeCard).join('');
+  }
+
+  
+  let listeningForPanic = false;
+  function listenForPanicKey() {
+    listeningForPanic = true;
+    document.getElementById('panic-key-display').value = 'Press any key...';
+    document.getElementById('panic-key-display').style.borderColor = '#c0622a';
+  }
+  function resetPanicKey() {
+    settings.panicKey = 'Escape';
+    saveSettings();
+    document.getElementById('panic-key-display').value = 'Current: Escape';
+    document.getElementById('panic-key-display').style.borderColor = '';
+  }
+
+  
+  const searchEngines = {
+    google: 'https://www.google.com/search?q=%s',
+    bing: 'https://www.bing.com/search?q=%s',
+    duckduckgo: 'https://duckduckgo.com/?q=%s',
+    brave: 'https://search.brave.com/search?q=%s',
+  };
+  let currentSearchEngine = 'https://www.google.com/search?q=%s';
+
+  function setSearchEngine(val) {
+    currentSearchEngine = searchEngines[val] || searchEngines.google;
+    settings.searchEngine = val;
+    saveSettings();
+  }
+
+  
+  function setIncognito(enabled) {
+    settings.incognito = enabled;
+    saveSettings();
+    document.getElementById('incognito-badge').classList.toggle('visible', enabled);
+    document.getElementById('incognito-enable-btn').classList.toggle('active', enabled);
+    document.getElementById('incognito-disable-btn').classList.toggle('active', !enabled);
+    if (enabled) { saveHistory([]); renderHistory(); }
+  }
+
+  
+  function applyBackground() {
+    const val = document.getElementById('bg-url-input').value.trim();
+    if (!val) return;
+    const isColor = val.startsWith('#') || val.startsWith('rgb') || /^[a-z]+$/i.test(val);
+    if (isColor) {
+      document.body.style.background = val;
+      document.documentElement.style.setProperty('--bg', val);
+    } else {
+      document.body.style.backgroundImage = `url('${val}')`;
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
+    }
+    settings.bgValue = val;
+    saveSettings();
+  }
+
+  function resetBackground() {
+    document.body.style.background = '';
+    document.body.style.backgroundImage = '';
+    document.documentElement.style.setProperty('--bg', '#0a0a0c');
+    settings.bgValue = '';
+    saveSettings();
+  }
+
+  
+  const weirdMap = {
+    a:'ǟ',b:'ɮ',c:'ƈ',d:'ɖ',e:'ɛ',f:'ʄ',g:'ɢ',h:'ɦ',i:'ɨ',j:'ʝ',
+    k:'ӄ',l:'ʟ',m:'ʍ',n:'ռ',o:'օ',p:'ք',q:'զ',r:'ʀ',s:'ֆ',t:'ȶ',
+    u:'ʊ',v:'ʋ',w:'աɨ',x:'Ӽ',y:'ʏ',z:'ʑ',
+    A:'ǟ',B:'ɮ',C:'ƈ',D:'ɖ',E:'ɛ',F:'ʄ',G:'ɢ',H:'ɦ',I:'ɨ',J:'ʝ',
+    K:'ӄ',L:'ʟ',M:'ʍ',N:'ռ',O:'օ',P:'ք',Q:'զ',R:'ʀ',S:'ֆ',T:'ȶ',
+    U:'ʊ',V:'ʋ',W:'աɨ',X:'Ӽ',Y:'ʏ',Z:'ʑ'
+  };
+
+  function weirdify(str) {
+    return str.split('').map(c => weirdMap[c] || c).join('');
+  }
+
+  
+  function weirdifyNode(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node._origText === undefined) node._origText = node.textContent;
+      node.textContent = weirdify(node._origText);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = node.tagName;
+      
+      if (['SCRIPT','STYLE','INPUT','SELECT','TEXTAREA','CANVAS'].includes(tag)) return;
+      for (const child of node.childNodes) weirdifyNode(child);
+    }
+  }
+
+  function restoreNode(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node._origText !== undefined) {
+        node.textContent = node._origText;
+        delete node._origText;
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = node.tagName;
+      if (['SCRIPT','STYLE','INPUT','SELECT','TEXTAREA','CANVAS'].includes(tag)) return;
+      for (const child of node.childNodes) restoreNode(child);
+    }
+  }
+
+  let weirdObserver = null;
+
+  function setWeirdText(enabled) {
+    settings.weirdText = enabled;
+    saveSettings();
+
+    if (enabled) {
+      weirdifyNode(document.body);
+      
+      weirdObserver = new MutationObserver(mutations => {
+        for (const m of mutations) {
+          for (const node of m.addedNodes) weirdifyNode(node);
+          if (m.type === 'characterData' && m.target._origText === undefined) {
+            m.target._origText = m.target.textContent;
+            m.target.textContent = weirdify(m.target._origText);
+          }
+        }
+      });
+      weirdObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
+      const preview = document.getElementById('weirdtext-preview');
+      if (preview) { preview.style.display = ''; preview.textContent = weirdify('Willie Games'); }
+    } else {
+      if (weirdObserver) { weirdObserver.disconnect(); weirdObserver = null; }
+      restoreNode(document.body);
+      const preview = document.getElementById('weirdtext-preview');
+      if (preview) preview.style.display = 'none';
+    }
+
+    document.getElementById('weirdtext-enable-btn').classList.toggle('active', enabled);
+    document.getElementById('weirdtext-disable-btn').classList.toggle('active', !enabled);
+  }
+
+  
+  document.addEventListener('keydown', e => {
+    if (listeningForPanic) {
+      listeningForPanic = false;
+      settings.panicKey = e.key;
+      saveSettings();
+      document.getElementById('panic-key-display').value = `Current: ${e.key}`;
+      document.getElementById('panic-key-display').style.borderColor = '';
+      return;
+    }
+    const panicKey = settings.panicKey || 'Escape';
+    if (e.key === panicKey && settings.panic !== false) {
+      document.body.innerHTML = '';
+      document.title = 'New Tab';
+      history.pushState({}, '', 'about:blank');
+    }
+    
+    const tag = document.activeElement.tagName;
+    if (e.key === 'b' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+      showView('proxy');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => {
+        if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'proxy'")) n.classList.add('active');
+      });
+    }
+  });
+
+  
+  renderGrids();
+  renderHistory();
+  renderBookmarks();
+  const seraphGrid = document.getElementById('seraph-grid');
+  if (seraphGrid) seraphGrid.innerHTML = seraphGames.map(makeSeraphCard).join('');
+
+  
+  function updateClock() {
+    const now = new Date();
+    let h = now.getHours();
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    const m = now.getMinutes().toString().padStart(2,'0');
+    const s = now.getSeconds().toString().padStart(2,'0');
+    const el = document.getElementById('topbar-clock');
+    if (el) el.textContent = `${h}:${m}:${s} ${ampm}`;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  
+  async function initBattery() {
+    if (!navigator.getBattery) return;
+    try {
+      const battery = await navigator.getBattery();
+      function updateBattery() {
+        const pct = Math.round(battery.level * 100);
+        const pctEl = document.getElementById('battery-pct');
+        const fill = document.getElementById('battery-fill');
+        const charging = document.getElementById('battery-charging');
+        if (pctEl) pctEl.textContent = pct + '%';
+        if (fill) fill.setAttribute('width', Math.max(1, Math.round(14 * battery.level)));
+        if (charging) charging.style.display = battery.charging ? 'inline' : 'none';
+        
+        const icon = document.getElementById('battery-icon');
+        if (icon) {
+          if (battery.charging) icon.style.color = '#66bb6a';
+          else if (pct <= 20) icon.style.color = '#ef5350';
+          else if (pct <= 50) icon.style.color = '#ffa726';
+          else icon.style.color = 'var(--silver)';
+        }
+      }
+      updateBattery();
+      battery.addEventListener('levelchange', updateBattery);
+      battery.addEventListener('chargingchange', updateBattery);
+    } catch(e) {}
+  }
+  initBattery();
+
+  
+  if (settings.theme) changeTheme(settings.theme);
+  if (settings.cloak) cloakTab(settings.cloak);
+  if (settings.customCloak) {
+    if (settings.customCloak.title) document.title = settings.customCloak.title;
+    if (settings.customCloak.icon) {
+      let link = document.querySelector("link[rel~='icon']");
+      if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+      link.href = settings.customCloak.icon;
+    }
+  }
+  if (settings.mobile) setMobile(true);
+  if (settings.sortGames) setSortGames(true);
+  if (settings.deledao) setDeledao(true);
+  if (settings.particles === false) {
+    particlesEnabled = false;
+    const canvas = document.getElementById('global-particles');
+    if (canvas) canvas.style.opacity = '0';
+    document.getElementById('particles-disable-btn').classList.add('active');
+  }
+  if (settings.incognito) setIncognito(true);
+  if (settings.searchEngine) {
+    setSearchEngine(settings.searchEngine);
+    const sel = document.getElementById('search-engine-select');
+    if (sel) sel.value = settings.searchEngine;
+  }
+  if (settings.panicKey) {
+    const el = document.getElementById('panic-key-display');
+    if (el) el.value = `Current: ${settings.panicKey}`;
+  }
+  if (settings.bgValue) {
+    const el = document.getElementById('bg-url-input');
+    if (el) el.value = settings.bgValue;
+    applyBackground();
+  }
+  if (settings.weirdText) setWeirdText(true);
+
+  
+  function setCursorColor(color, glow1, glow2) {
+    const cursor = document.getElementById('custom-cursor');
+    if (!cursor) return;
+    cursor.style.background = color;
+    cursor.style.boxShadow = `0 0 8px 4px ${glow1}, 0 0 24px 10px ${glow2}`;
+    settings.cursorColor = { color, glow1, glow2 };
+    saveSettings();
+  }
+  window.setCursorColor = setCursorColor;
+
+  
+  function setCursorSize(size) {
+    const cursor = document.getElementById('custom-cursor');
+    if (!cursor) return;
+    cursor.style.width = size + 'px';
+    cursor.style.height = size + 'px';
+    settings.cursorSize = size;
+    saveSettings();
+  }
+  window.setCursorSize = setCursorSize;
+
+  
+  if (settings.cursorColor) {
+    const c = settings.cursorColor;
+    setCursorColor(c.color, c.glow1, c.glow2);
+  }
+  if (settings.cursorSize) {
+    setCursorSize(settings.cursorSize);
+    const slider = document.getElementById('cursor-size-slider');
+    if (slider) slider.value = settings.cursorSize;
+  }
+
+  
+  const _origShowView = showView;
+  window.showView = function(id) {
+    _origShowView(id);
+  };
+
+  
+  if (!particlesInited) {
+    particlesInited = true;
+    setTimeout(initParticles, 50);
+  }
+
+  
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.addEventListener('click', () => {});
+  });
+
+  window.addEventListener('beforeunload', function(e) {
+    e.preventDefault();
+    e.returnValue = '';
+  });
+</script>
+
+<style>
+  #chat-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid #37474f;
+    color: #e0e8ef;
+    font-size: 22px;
+    cursor: pointer;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    transition: all 0.2s;
+  }
+  #chat-toggle:hover { border-color: #b0bec5; transform: scale(1.05); }
+  #chat-unread {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef5350;
+    color: #fff;
+    font-size: 10px;
+    font-family: 'Orbitron', monospace;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  #chat-unread.show { display: flex; }
+  #chat-panel {
+    position: fixed;
+    bottom: 88px;
+    right: 24px;
+    width: 320px;
+    height: 480px;
+    background: rgba(14,14,20,0.55);
+    backdrop-filter: blur(12px);
+    border: 1px solid #37474f;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    z-index: 499;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    transform: scale(0.95) translateY(10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+    overflow: hidden;
+  }
+  #chat-panel.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
+  #chat-header { padding: 14px 16px; border-bottom: 1px solid #1e2a32; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  #chat-header-left { display: flex; align-items: center; gap: 10px; }
+  #chat-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ef5350; transition: background 0.3s; }
+  #chat-status-dot.connected { background: #66bb6a; }
+  #chat-title { font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 700; color: #e0e8ef; letter-spacing: 2px; text-transform: uppercase; }
+  #chat-online { font-size: 11px; color: #546e7a; letter-spacing: 1px; }
+  #chat-close { color: #546e7a; cursor: pointer; font-size: 16px; transition: color 0.2s; line-height: 1; }
+  #chat-close:hover { color: #e0e8ef; }
+  #chat-username-bar { padding: 8px 12px; border-bottom: 1px solid #1e2a32; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  #chat-username-bar label { font-size: 11px; color: #546e7a; letter-spacing: 1px; white-space: nowrap; }
+  #chat-username { flex: 1; background: #14141a; border: 1px solid #1e2a32; color: #cfd8dc; padding: 4px 8px; border-radius: 6px; font-family: 'Rajdhani', sans-serif; font-size: 13px; outline: none; }
+  #chat-username:focus { border-color: #607d8b; }
+  #chat-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; scrollbar-width: thin; scrollbar-color: #1e2a32 transparent; }
+  #chat-messages::-webkit-scrollbar { width: 3px; }
+  #chat-messages::-webkit-scrollbar-thumb { background: #1e2a32; border-radius: 2px; }
+  .chat-msg { background: #14141a; border: 1px solid #1e2a32; border-radius: 8px; padding: 8px 10px; animation: msgIn 0.15s ease; }
+  @keyframes msgIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+  .chat-msg-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .chat-msg-user { font-family: 'Orbitron', monospace; font-size: 10px; font-weight: 700; color: #b0bec5; letter-spacing: 1px; }
+  .chat-msg-time { font-size: 10px; color: #37474f; }
+  .chat-msg-text { font-size: 13px; color: #cfd8dc; line-height: 1.4; word-break: break-word; }
+  .chat-msg.mine { border-color: #1e3040; background: #101820; }
+  .chat-msg.mine .chat-msg-user { color: #64b5f6; }
+  .chat-system { text-align: center; font-size: 11px; color: #37474f; letter-spacing: 1px; font-family: 'Orbitron', monospace; padding: 4px 0; }
+  #chat-input-area { padding: 10px 12px; border-top: 1px solid #1e2a32; display: flex; gap: 8px; flex-shrink: 0; }
+  #chat-input { flex: 1; background: #14141a; border: 1px solid #1e2a32; color: #cfd8dc; padding: 8px 12px; border-radius: 8px; font-family: 'Rajdhani', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+  #chat-input:focus { border-color: #607d8b; }
+  #chat-input::placeholder { color: #37474f; }
+  #chat-send { background: transparent; border: 1px solid #37474f; color: #b0bec5; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+  #chat-send:hover { border-color: #b0bec5; color: #e0e8ef; }
+</style>
+
+<button id="chat-toggle" onclick="toggleChat()">
+  💬
+  <span id="chat-unread"></span>
+</button>
+
+<div id="chat-panel">
+  <div id="chat-header">
+    <div id="chat-header-left">
+      <div id="chat-status-dot"></div>
+      <span id="chat-title">willie-chat Chat</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span id="chat-online">0 online</span>
+      <span id="chat-close" onclick="toggleChat()">✕</span>
+    </div>
+  </div>
+  <div id="chat-username-bar">
+    <label>Name:</label>
+    <input id="chat-username" maxlength="20" placeholder="Anonymous"/>
+  </div>
+  <div id="chat-messages">
+    <div class="chat-system">WILLIE GAMES — willie CHAT</div>
+  </div>
+  <div id="chat-input-area">
+    <input id="chat-input" placeholder="Say something..." maxlength="300"/>
+    <button id="chat-send" onclick="chatSend()">➤</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  let chatWs = null;
+  let chatOpen = false;
+  let unreadCount = 0;
+  let joined = false;
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let audioCtx = null;
+
+  
+  function playPing() {
+    try {
+      if (!audioCtx) audioCtx = new AudioCtx();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.3);
+    } catch(e) {}
+  }
+
+  
+  const savedName = localStorage.getItem('willie-chat-username');
+  if (savedName) document.getElementById('chat-username').value = savedName;
+
+  document.getElementById('chat-username').addEventListener('change', () => {
+    localStorage.setItem('willie-chat-username', document.getElementById('chat-username').value.trim());
+  });
+
+  
+  function toggleChat() {
+    chatOpen = !chatOpen;
+    document.getElementById('chat-panel').classList.toggle('open', chatOpen);
+    if (chatOpen) {
+      unreadCount = 0;
+      document.getElementById('chat-unread').classList.remove('show');
+      document.getElementById('chat-input').focus();
+      scrollChatBottom();
+      if (!chatWs || chatWs.readyState > 1) connectChat();
+    }
+  }
+
+  
+  function connectChat() {
+    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+    chatWs = new WebSocket(`${proto}://${location.host}/chat/`);
+
+    chatWs.addEventListener('open', () => {
+      document.getElementById('chat-status-dot').classList.add('connected');
+      addSystemMsg('Connected to global chat');
+      
+      const username = document.getElementById('chat-username').value.trim() || 'Anonymous';
+      chatWs.send(JSON.stringify({ type: 'join', username }));
+      joined = true;
+    });
+
+    chatWs.addEventListener('close', () => {
+      joined = false;
+      document.getElementById('chat-status-dot').classList.remove('connected');
+      addSystemMsg('Disconnected — reconnecting in 3s...');
+      setTimeout(connectChat, 3000);
+    });
+
+    chatWs.addEventListener('message', (e) => {
+      let data; try { data = JSON.parse(e.data); } catch { return; }
+      if (data.type === 'history') {
+        data.messages.forEach(m => {
+          if (m.type === 'system') addSystemMsg(m.text);
+          else appendMsg(m, false);
+        });
+        scrollChatBottom();
+      } else if (data.type === 'message') {
+        appendMsg(data, true);
+      } else if (data.type === 'system') {
+        addSystemMsg(data.text);
+        if (!chatOpen) playPing();
+      } else if (data.type === 'online') {
+        document.getElementById('chat-online').textContent = `${data.count} online`;
+        const sv = document.getElementById('stat-viewers');
+        if (sv) sv.textContent = data.count;
+      }
+    });
+  }
+
+  
+  function appendMsg(msg, animate) {
+    const myName = document.getElementById('chat-username').value.trim() || 'Anonymous';
+    const isMe = msg.username === myName;
+    const el = document.createElement('div');
+    el.className = 'chat-msg' + (isMe ? ' mine' : '');
+    const t = new Date(msg.time);
+    const timeStr = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    el.innerHTML = `<div class="chat-msg-header"><span class="chat-msg-user">${esc(msg.username)}</span><span class="chat-msg-time">${timeStr}</span></div><div class="chat-msg-text">${esc(msg.text)}</div>`;
+    document.getElementById('chat-messages').appendChild(el);
+    if (animate && !isMe) {
+      playPing();
+      if (!chatOpen) {
+        unreadCount++;
+        const badge = document.getElementById('chat-unread');
+        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        badge.classList.add('show');
+      }
+    }
+    if (animate) scrollChatBottom();
+  }
+
+  
+  function addSystemMsg(text) {
+    const el = document.createElement('div');
+    el.className = 'chat-system';
+    el.textContent = text;
+    document.getElementById('chat-messages').appendChild(el);
+    scrollChatBottom();
+  }
+
+  function scrollChatBottom() {
+    const el = document.getElementById('chat-messages');
+    el.scrollTop = el.scrollHeight;
+  }
+
+  
+  function chatSend() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+    if (!chatWs || chatWs.readyState !== 1) { connectChat(); return; }
+    const username = document.getElementById('chat-username').value.trim() || 'Anonymous';
+    localStorage.setItem('willie-chat-username', username);
+    chatWs.send(JSON.stringify({ type: 'message', username, text }));
+    input.value = '';
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  document.getElementById('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') chatSend(); });
+
+  connectChat();
+  window.toggleChat = toggleChat;
+  window.chatSend = chatSend;
+})();
+</script>
+
+
+
+
+<div id="custom-cursor"></div>
+<script>
+(function() {
+  var cursor = document.getElementById('custom-cursor');
+  document.addEventListener('mousemove', function(e) {
+    cursor.style.opacity = '1';
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+  document.addEventListener('mouseleave', function() {
+    cursor.style.opacity = '0';
+  });
+
+  
+  window.addEventListener('blur', function() {
+    cursor.style.opacity = '0';
+  });
+  window.addEventListener('focus', function() {
+    cursor.style.opacity = '1';
+  });
+})();
+
+(function() {
+  var trail = [];
+  var numDots = 8;
+  for (var i = 0; i < numDots; i++) {
+    var dot = document.createElement('div');
+    dot.className = 'cursor-trail';
+    dot.style.opacity = '0';
+    document.body.appendChild(dot);
+    trail.push({ el: dot, x: window.innerWidth / 2, y: window.innerHeight / 2 });
+  }
+  var mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+  document.addEventListener('mousemove', function(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+  function animateTrail() {
+    for (var i = 0; i < trail.length; i++) {
+      var prev = i === 0 ? { x: mouseX, y: mouseY } : trail[i - 1];
+      trail[i].x += (prev.x - trail[i].x) * 0.35;
+      trail[i].y += (prev.y - trail[i].y) * 0.35;
+      var opacity = (1 - i / trail.length) * 0.5;
+      var scale = 1 - (i / trail.length) * 0.7;
+      trail[i].el.style.left = trail[i].x + 'px';
+      trail[i].el.style.top = trail[i].y + 'px';
+      trail[i].el.style.opacity = opacity;
+      trail[i].el.style.transform = 'translate(-50%,-50%) scale(' + scale + ')';
+    }
+    requestAnimationFrame(animateTrail);
+  }
+  animateTrail();
+})();
+</script>
+</body>
+</html>
