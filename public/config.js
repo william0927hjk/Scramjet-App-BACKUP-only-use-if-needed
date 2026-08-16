@@ -1,1 +1,1 @@
-
+let _CONFIG = {};
